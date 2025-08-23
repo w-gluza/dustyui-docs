@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build --turbopack && storybook build --output-dir public/storybook",
     "start": "next start",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
