@@ -20,6 +20,9 @@
 # production
 /build
 
+# Ignore generated Storybook static build
+/public/storybook
+
 # misc
 .DS_Store
 *.pem

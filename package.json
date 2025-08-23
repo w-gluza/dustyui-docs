@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build:storybook": "storybook build --output-dir public/storybook"
   },
   "dependencies": {
     "next": "15.5.0",
