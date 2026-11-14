@@ -26,7 +26,3 @@ export const IconLeft: Story = {
 export const IconRight: Story = {
   args: { icon: "★", iconPosition: "right" },
 };
-
-export const Announced: Story = {
-  args: { label: "3 unread", announce: true },
-};

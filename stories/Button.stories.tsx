@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { fn } from "storybook/test";
+import { expect, fn, waitFor } from "storybook/test";
 import { Button } from "dustyui";
 
 const meta = {
@@ -21,6 +21,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: { variant: "primary" },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Save" }));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
 };
 
 export const Secondary: Story = {
@@ -33,4 +37,27 @@ export const Disabled: Story = {
 
 export const Loading: Story = {
   args: { loading: true },
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole("button", { name: "Save" });
+    await userEvent.click(button);
+    await userEvent.keyboard("{Enter}");
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(button).toHaveFocus();
+    await expect(button).toHaveAttribute("aria-disabled", "true");
+    await waitFor(() =>
+      expect(
+        document.querySelector("[data-dusty-announcer]"),
+      ).toHaveTextContent("Loading"),
+    );
+  },
+};
+
+export const FocusableWhenUnavailable: Story = {
+  args: { "aria-disabled": true },
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole("button", { name: "Save" });
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(button).toHaveFocus();
+  },
 };

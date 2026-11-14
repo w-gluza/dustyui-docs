@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect } from "storybook/test";
 import { Avatar } from "dustyui";
 
 const placeholderPortrait =
@@ -10,16 +11,23 @@ const meta = {
   parameters: { layout: "centered" },
   tags: ["autodocs"],
   args: {
-    role: "img",
-    "aria-label": "Wioletta Gluza",
-    fallback: "WG",
+    name: "Wioletta Gluza",
   },
 } satisfies Meta<typeof Avatar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Fallback: Story = {};
+export const Initials: Story = {
+  play: async ({ canvas }) => {
+    const avatar = canvas.getByRole("img", { name: "Wioletta Gluza" });
+    await expect(avatar).toHaveTextContent("WG");
+  },
+};
+
+export const CustomFallback: Story = {
+  args: { fallback: "W" },
+};
 
 export const Small: Story = {
   args: { size: 32 },
@@ -31,8 +39,13 @@ export const Large: Story = {
 
 export const WithImage: Story = {
   args: {
-    role: undefined,
-    "aria-label": undefined,
-    image: <img alt="Wioletta Gluza" src={placeholderPortrait} />,
+    image: <img alt="" src={placeholderPortrait} />,
+  },
+};
+
+export const Decorative: Story = {
+  args: { decorative: true },
+  play: async ({ canvas }) => {
+    await expect(canvas.queryByRole("img")).toBeNull();
   },
 };
