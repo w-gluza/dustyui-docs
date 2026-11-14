@@ -1,0 +1,32 @@
+.demo {
+  display: grid;
+  gap: 0.75rem;
+  max-inline-size: 60rem;
+  font-family: system-ui, sans-serif;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--dusty-weight-semibold);
+}
+
+.testing {
+  margin: 0;
+  max-inline-size: 65ch;
+  color: var(--dusty-text-muted);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.narrow {
+  inline-size: 16rem;
+  max-inline-size: 100%;
+  border: 1px solid var(--dusty-border);
+  border-radius: var(--dusty-radius-md);
+}
