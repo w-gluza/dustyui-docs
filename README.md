@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DustyUI docs
 
-## Getting Started
+Landing page and Storybook for [DustyUI](https://github.com/w-gluza/dustyui).
 
-First, run the development server:
+## Preview components
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run storybook
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Storybook opens on http://localhost:6006.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Preview unpublished DustyUI changes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+With the `dustyui` repo cloned next to this one:
 
-## Learn More
+```bash
+(cd ../dustyui && npm run build)
+npm link ../dustyui
+```
 
-To learn more about Next.js, take a look at the following resources:
+`npm install` removes the link, so run `npm link ../dustyui` again afterwards.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Script              | What it does                                                     |
+| ------------------- | ---------------------------------------------------------------- |
+| `npm run dev`       | Landing page on http://localhost:3000                            |
+| `npm run storybook` | Storybook dev server                                             |
+| `npm run test`      | Runs every story in a headless browser with accessibility checks |
+| `npm run build`     | Builds Storybook into `public/storybook`, then the Next app      |
+| `npm run lint`      | ESLint, with accessibility rules as errors                       |
+| `npm run typecheck` | Type-checks with TypeScript 7                                    |
+| `npm run format`    | Prettier                                                         |

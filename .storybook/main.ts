@@ -1,15 +1,9 @@
 import type { StorybookConfig } from "@storybook/nextjs-vite";
-import type { UserConfig } from "vite";
 
 const config: StorybookConfig = {
-  stories: [
-    "../stories/**/*.mdx",
-    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-  ],
+  stories: ["../stories/**/*.stories.tsx"],
   addons: [
-    "@chromatic-com/storybook",
     "@storybook/addon-docs",
-    "@storybook/addon-onboarding",
     "@storybook/addon-a11y",
     "@storybook/addon-vitest",
   ],
@@ -17,10 +11,14 @@ const config: StorybookConfig = {
     name: "@storybook/nextjs-vite",
     options: {},
   },
-  viteFinal: async (viteConfig: UserConfig) => {
+  viteFinal: async (viteConfig) => {
     if (process.env.NODE_ENV === "production") {
       viteConfig.base = "/storybook/";
     }
+    viteConfig.resolve = {
+      ...viteConfig.resolve,
+      dedupe: ["react", "react-dom"],
+    };
     return viteConfig;
   },
 };

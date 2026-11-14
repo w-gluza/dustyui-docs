@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { Button } from "dustyui";
+import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div style={{ textAlign: "center", padding: "2rem" }}>
-      <h1>Dusty UI Landing Page</h1>
-      <Link href="/storybook">
-        <Button>View Components Test</Button>
+    <main className={styles.home}>
+      <h1>DustyUI</h1>
+      <Link className={styles.link} href="/storybook">
+        View components
       </Link>
-    </div>
+    </main>
   );
 }
