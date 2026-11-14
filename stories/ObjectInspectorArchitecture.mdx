@@ -1,0 +1,95 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Architecture/Object inspector" />
+
+# How the object inspector is built
+
+The object inspector shows any JavaScript value as a tree you can open, search and copy from. This page explains how it is put together and why.
+
+## The question
+
+There were two ways to build it:
+
+1. One component that walks a value and draws it.
+2. Separate parts: one that understands values, one that is a tree, and a thin component joining them.
+
+It is built the second way. A tree is useful without object inspection, for files or navigation. Understanding a value is useful without a tree, for a one-line preview or a log. Joined together, neither could be reused or tested alone.
+
+## Three layers
+
+| Layer           | What it does                                                               | Knows about                   |
+| --------------- | -------------------------------------------------------------------------- | ----------------------------- |
+| Describe        | Turns a value into nodes: a label, a kind, a one-line preview and children | JavaScript values only        |
+| Tree            | Shows nodes as rows, with keyboard, selection and large-list handling      | Nodes with an id and children |
+| ObjectInspector | Describes a value, hands the nodes to Tree and adds search and details     | Both                          |
+
+The dependency runs one way. ObjectInspector imports Tree; Tree never imports ObjectInspector. The describe layer and the tree's own logic are plain TypeScript with no React, so a different renderer could use them unchanged.
+
+### Describe
+
+`describe(value)` returns one node. A node creates its children only when asked, so describing a huge value costs nothing until a row is opened.
+
+It makes three promises:
+
+- **It never throws.** A value that refuses to be read becomes a row that says so, and its siblings still show.
+- **It never runs your code on purpose.** Getters are shown as `(...)` and not called. Custom text conversion and custom iteration are ignored.
+- **It always finishes.** A value that contains itself is shown once, then marked as circular with the path it points back to.
+
+Types are recognised by asking the value itself, not by checking its prototype. A Map from another frame is still a Map, and an object that only inherits from Map is not.
+
+A proxy can still run its own traps when it is read. The inspector cannot prevent that, but a throwing trap cannot break it.
+
+### Tree
+
+All the behaviour lives in pure functions: which rows are visible, what a key press does, where focus goes when a row disappears. The React component holds state and draws rows.
+
+It follows the WAI-ARIA tree pattern. The whole tree is one tab stop, arrow keys move between rows, and every row tells assistive technology its level, its position and whether it is open.
+
+Above 200 visible rows the tree draws only the rows near the view and keeps the full scrolling height. The focused row is always kept, so the keyboard position survives scrolling away. Each row still reports its true position in the whole list to assistive technology.
+
+### ObjectInspector
+
+This layer is small. It describes the value, tells Tree how to draw a row, and adds two optional parts:
+
+- **Search** looks through keys and values, counts the matches and opens the way to each one.
+- **Details** shows the path, type and whole value of the selected row, and copies either.
+
+Rows are identified by their path. When the value is replaced with new data of the same shape, the same rows stay open.
+
+## Decisions and their cost
+
+| Decision                                                   | Why                                                                      | Cost                                                                                        |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Getters are never run                                      | Reading a value must not change it or fail                               | You cannot see a getter's result                                                            |
+| Only own properties are listed                             | Predictable and fast                                                     | Inherited getters and methods are not shown                                                 |
+| Plain objects take a fast path when their type is detected | The first search of a large value was about nine times slower without it | A Map whose prototype was replaced with the plain object prototype shows as an empty object |
+| Search stops after 500,000 values                          | A search must always finish                                              | Larger values are searched in part, and the count says so                                   |
+| Copy writes readable text, up to 5,000 values              | Valid JSON cannot hold a Map, a BigInt or a circular reference           | The copied text is not guaranteed to parse as JSON                                          |
+| Rows in a large tree have one height                       | Positions can be calculated without measuring every row                  | Rows cannot wrap onto a second line                                                         |
+
+## How it is tested
+
+- **Examples** for each kind of value and each key press.
+- **Generated data.** Thousands of random values and random key sequences check rules that must always hold: describing never throws, ids are unique, focus is always on a visible row.
+- **Hostile values.** Proxies that refuse to be read, revoked proxies, throwing getters and values from another frame.
+- **A real browser** for focus, selection, scrolling and screen reader announcements.
+- **Deliberate breakage.** After a test is written, the code it covers is broken on purpose to confirm the test fails.
+
+## What was measured
+
+| What                                                           | Result              |
+| -------------------------------------------------------------- | ------------------- |
+| Opening a list of 100,000 items                                | About 30 rows drawn |
+| Describing 100,000 items                                       | About 0.1 seconds   |
+| First search across 100,000 objects (400,000 values)           | About 0.3 seconds   |
+| Search for an item near the end and jump to it, in the browser | About 0.2 seconds   |
+
+Under a strict content security policy, a `style` attribute rendered on the server is blocked. Row indentation is therefore also set from script once the page is interactive. This was measured in a real Next.js build.
+
+## What is not built yet
+
+- Expand all, collapse all and expand to a level.
+- Showing only the rows that match a search.
+- A row for inherited getters and methods.
+- Swapped arrow keys for right-to-left languages.
+- Text in languages other than English for search and details.

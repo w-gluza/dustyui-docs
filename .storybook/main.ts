@@ -1,9 +1,17 @@
 import type { StorybookConfig } from "@storybook/nextjs-vite";
+import remarkGfm from "remark-gfm";
 
 const config: StorybookConfig = {
-  stories: ["../stories/**/*.stories.tsx"],
+  stories: ["../stories/**/*.mdx", "../stories/**/*.stories.tsx"],
   addons: [
-    "@storybook/addon-docs",
+    {
+      name: "@storybook/addon-docs",
+      options: {
+        mdxPluginOptions: {
+          mdxCompileOptions: { remarkPlugins: [remarkGfm] },
+        },
+      },
+    },
     "@storybook/addon-a11y",
     "@storybook/addon-vitest",
   ],
