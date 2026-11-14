@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect } from "storybook/test";
 import { Badge } from "dustyui";
 
 const meta = {
@@ -17,12 +18,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvas }) => {
+    const label = canvas.getByText("New");
+    await expect(label.parentElement?.children).toHaveLength(1);
+  },
+};
 
 export const IconLeft: Story = {
   args: { icon: "★", iconPosition: "left" },
+  play: async ({ canvas }) => {
+    const icon = canvas.getByText("★");
+    await expect(icon).toHaveAttribute("aria-hidden", "true");
+    await expect(icon.nextElementSibling).toHaveTextContent("New");
+  },
 };
 
 export const IconRight: Story = {
   args: { icon: "★", iconPosition: "right" },
+  play: async ({ canvas }) => {
+    const icon = canvas.getByText("★");
+    await expect(icon).toHaveAttribute("aria-hidden", "true");
+    await expect(icon.previousElementSibling).toHaveTextContent("New");
+  },
 };

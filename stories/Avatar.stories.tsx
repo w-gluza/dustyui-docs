@@ -27,10 +27,17 @@ export const Initials: Story = {
 
 export const CustomFallback: Story = {
   args: { fallback: "W" },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("img")).toHaveTextContent("W");
+  },
 };
 
 export const Small: Story = {
   args: { size: 32 },
+  play: async ({ canvas }) => {
+    const { width, height } = canvas.getByRole("img").getBoundingClientRect();
+    await expect([width, height]).toEqual([32, 32]);
+  },
 };
 
 export const Large: Story = {
@@ -40,6 +47,11 @@ export const Large: Story = {
 export const WithImage: Story = {
   args: {
     image: <img alt="" src={placeholderPortrait} />,
+  },
+  play: async ({ canvas }) => {
+    const avatar = canvas.getByRole("img", { name: "Wioletta Gluza" });
+    await expect(avatar.querySelector("img")).toHaveAttribute("alt", "");
+    await expect(avatar).toHaveTextContent("");
   },
 };
 

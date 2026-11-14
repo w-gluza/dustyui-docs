@@ -33,6 +33,12 @@ export const Secondary: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true },
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole("button", { name: "Save" });
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(button).toBeDisabled();
+  },
 };
 
 export const Loading: Story = {

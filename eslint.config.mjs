@@ -13,7 +13,10 @@ export default defineConfig([
       "jsx-a11y/anchor-is-valid": "error",
       "jsx-a11y/alt-text": "error",
       "jsx-a11y/label-has-associated-control": "error",
-      "jsx-a11y/control-has-associated-label": "error",
+      "jsx-a11y/control-has-associated-label": [
+        "error",
+        { ignoreElements: ["input", "select", "textarea"] },
+      ],
       "jsx-a11y/interactive-supports-focus": "error",
       "jsx-a11y/no-autofocus": "error",
       "jsx-a11y/no-static-element-interactions": "error",
