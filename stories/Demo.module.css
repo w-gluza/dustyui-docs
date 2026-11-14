@@ -30,3 +30,8 @@
   border: 1px solid var(--dusty-border);
   border-radius: var(--dusty-radius-md);
 }
+
+.tall {
+  max-block-size: 20rem;
+  overflow: auto;
+}

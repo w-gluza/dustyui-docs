@@ -46,6 +46,8 @@ A node needs an \`id\`, a \`childCount\` and a \`children()\` function. \`label\
 
 To control which rows are open, pass \`expanded\` and \`onExpandedChange\`. Otherwise use \`defaultExpanded\`.
 
+The selected row follows focus. Listen with \`onSelectedChange\`, or pass \`selected\` to choose the row yourself; the tree brings it into view without taking focus.
+
 **Keyboard**
 
 | Key | Action |
@@ -62,7 +64,8 @@ The whole tree is one tab stop.
 
 **Limitations**
 
-- Every visible row is rendered, so very large trees are slow to open.
+- A tree with more than 200 visible rows renders only the rows near the view, so every row must have the same height. Set \`--tree-row-height\` to change it.
+- In a large tree the browser's own find does not see rows that are scrolled out of view.
 - Left and Right are not swapped for right-to-left languages.
 `;
 
@@ -106,6 +109,17 @@ const meta = {
         "The ids of the rows that start open, when expansion is not controlled.",
       control: false,
       table: { type: { summary: "Iterable<string>" } },
+    },
+    selected: {
+      description:
+        "The id of the selected row. Pass it to control selection yourself.",
+      control: false,
+      table: { type: { summary: "string" } },
+    },
+    onSelectedChange: {
+      description: "Called with the id of the row that becomes selected.",
+      control: false,
+      table: { type: { summary: "(selected: string) => void" } },
     },
     onExpandedChange: {
       description:

@@ -26,12 +26,27 @@ To control which rows are open, pass \`expanded\` and \`onExpandedChange\`. Rows
 
 It is keyboard operable in the same way as Tree.
 
+**Search**
+
+Add \`searchable\` for a search field above the tree. It looks in keys and in values, ignoring case, including text a row cuts short. Enter moves to the next match and Shift+Enter to the previous one, opening closed rows on the way. Focus stays in the field.
+
+**Details**
+
+Add \`showDetails\` for a panel below the tree with the path, type and whole value of the selected row, and buttons that copy the path or the value. Copying never runs a getter.
+
+**Large values**
+
+A tree with more than 200 visible rows renders only the rows near the view. Give the tree a height through \`className\` to scroll it on its own; without one it follows the page.
+
 **Limitations**
 
 - Getters are shown but never run.
 - Only an object's own properties are listed; inherited getters and methods are not.
 - Types without special handling, such as Promise or WeakMap, show their name only.
-- Every visible row is rendered, so very large lists are slow to open.
+- Search stops after 500,000 values and says so. A list longer than that is not searched.
+- Copy value writes at most 5,000 values. A longer list is copied as its one-line summary.
+- In a large tree the browser's own find does not see rows that are scrolled out of view.
+- The text of the search field, the details and the buttons is English only.
 `;
 
 const meta = {
@@ -65,6 +80,34 @@ const meta = {
         type: { summary: "Iterable<string>" },
         defaultValue: { summary: '["$"]' },
       },
+    },
+    searchable: {
+      description: "Adds a search field above the tree.",
+      control: false,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+    showDetails: {
+      description:
+        "Adds a panel with the path, type and value of the selected row, and copy buttons.",
+      control: false,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+    selected: {
+      description:
+        "The id of the selected row. Pass it to control selection yourself.",
+      control: false,
+      table: { type: { summary: "string" } },
+    },
+    onSelectedChange: {
+      description: "Called with the id of the row that becomes selected.",
+      control: false,
+      table: { type: { summary: "(selected: string) => void" } },
     },
     onExpandedChange: {
       description:
@@ -318,5 +361,92 @@ export const LongValues: Story = {
     await expect(
       canvas.getByRole("treeitem", { name: /^years/u }),
     ).toHaveTextContent("Array(200) [1872, 1873, 1874, 1875, 1876, …]");
+  },
+};
+
+export const Search: Story = {
+  render: () => (
+    <Demo
+      title="Search"
+      testing="Search finds keys and values, counts the matches, and Enter opens the way to each match in turn."
+    >
+      <ObjectInspector
+        label="National parks of the world"
+        value={mediumParks}
+        searchable
+      />
+    </Demo>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByRole("searchbox"), "condor");
+    await expect(await canvas.findByText(/^\d+ matches$/u)).toBeVisible();
+
+    await userEvent.keyboard("{Enter}");
+    await expect(await canvas.findByText(/^1 of \d+$/u)).toBeVisible();
+    await expect(
+      canvas.getByRole("treeitem", { selected: true }),
+    ).toHaveTextContent(/condor/iu);
+    await expect(canvas.getByRole("searchbox")).toHaveFocus();
+  },
+};
+
+export const Details: Story = {
+  render: () => (
+    <Demo
+      title="Details"
+      testing="The panel below the tree shows the path, type and whole value of the selected row, with buttons to copy the path or the value."
+    >
+      <ObjectInspector label="Torres del Paine" value={smallPark} showDetails />
+    </Demo>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("treeitem", { name: /^name/u }));
+
+    const details = canvas.getByRole("region", { name: "Selected value" });
+    await expect(details).toHaveTextContent("$.name");
+    await expect(details).toHaveTextContent("Torres del Paine");
+    await expect(
+      canvas.getByRole("button", { name: "Copy path" }),
+    ).toBeVisible();
+  },
+};
+
+const sightingLog = {
+  note: "Generated for this demo. These are not real records.",
+  sightings: Array.from({ length: 100_000 }, (_, index) => ({
+    id: index + 1,
+    animal: ["Guanaco", "Puma", "Andean condor"][index % 3],
+    count: (index % 7) + 1,
+  })),
+};
+
+export const LargeList: Story = {
+  render: () => (
+    <Demo
+      title="Large list"
+      testing="A list of 100,000 items stays quick, because only the rows near the view are rendered. Search and details work across the whole list."
+    >
+      <ObjectInspector
+        label="Sighting log"
+        value={sightingLog}
+        className={styles.tall}
+        defaultExpanded={["$", "$/.sightings"]}
+        searchable
+        showDetails
+      />
+    </Demo>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getAllByRole("treeitem").length).toBeLessThan(100);
+    await expect(
+      canvas.getByRole("treeitem", { name: /^0:/u }),
+    ).toHaveAttribute("aria-setsize", "100000");
+
+    await userEvent.click(canvas.getByRole("treeitem", { name: /^0:/u }));
+    await userEvent.keyboard("{End}");
+    await expect(
+      await canvas.findByRole("treeitem", { name: /^99999:/u }),
+    ).toHaveFocus();
+    await expect(canvas.getAllByRole("treeitem").length).toBeLessThan(100);
   },
 };

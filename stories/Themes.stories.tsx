@@ -22,7 +22,12 @@ function AllComponents() {
         <Badge label="New" icon="★" />
         <Avatar name="Wioletta Gluza" size={40} />
       </div>
-      <ObjectInspector label="Every kind of value" value={everyKind} />
+      <ObjectInspector
+        label="Every kind of value"
+        value={everyKind}
+        searchable
+        showDetails
+      />
       <ObjectInspector label="Tricky values" value={tricky} />
     </Demo>
   );
@@ -40,7 +45,10 @@ type Story = StoryObj<typeof meta>;
 function themed(theme: string, scheme: string, surface: string): Story {
   return {
     globals: { theme, scheme },
-    play: async () => {
+    play: async ({ canvas, userEvent }) => {
+      await userEvent.type(canvas.getByRole("searchbox"), "a");
+      await expect(await canvas.findByText(/^\d+ match/u)).toBeVisible();
+      await userEvent.keyboard("{Enter}");
       const root = document.documentElement;
       await expect(root.dataset.theme).toBe(theme);
       await expect(root.dataset.colorScheme).toBe(scheme);
