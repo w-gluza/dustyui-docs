@@ -84,7 +84,24 @@ Rows are identified by their path. When the value is replaced with new data of t
 | First search across 100,000 objects (400,000 values)           | About 0.3 seconds   |
 | Search for an item near the end and jump to it, in the browser | About 0.2 seconds   |
 
-Under a strict content security policy, a `style` attribute rendered on the server is blocked. Row indentation is therefore also set from script once the page is interactive. This was measured in a real Next.js build.
+## Strict content security policy
+
+One script packs the library, installs it in a fresh Next.js app and checks it in a browser under this policy:
+
+`default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'`
+
+| Scenario                                                                                     | Result                                                              |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| The package installs, type-checks and builds in the app                                      | Passes                                                              |
+| Theme tokens and component styles load, with and without script                              | Passes                                                              |
+| Tree rows are in the server HTML before any script runs                                      | Passes                                                              |
+| Server-rendered tree, once interactive: indentation, large-list handling, search and details | Passes                                                              |
+| Tree mounted in the browser after load: indentation and large-list handling                  | Passes                                                              |
+| Components mounted in the browser trigger no policy violations                               | Passes                                                              |
+| Server-rendered tree before script runs: indentation                                         | Blocked by the policy; rows show flat until the page is interactive |
+| Server-rendered Avatar with a custom size                                                    | Blocked by the policy; it stays at the default size                 |
+
+The policy blocks a `style` attribute rendered on the server. The tree therefore also sets indentation and row spacing from script once the page is interactive. Avatar has no script of its own, so it cannot do the same.
 
 ## What is not built yet
 
