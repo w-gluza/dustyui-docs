@@ -7,6 +7,9 @@ const meta = {
   component: Button,
   parameters: { layout: "centered" },
   tags: ["autodocs"],
+  argTypes: {
+    variant: { control: "select", options: ["primary", "secondary"] },
+  },
   args: {
     children: "Save",
     onClick: fn(),

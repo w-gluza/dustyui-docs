@@ -1,6 +1,44 @@
 import type { Preview } from "@storybook/nextjs-vite";
+import "dustyui/themes/mono.css";
+import "./preview.css";
 
 const preview: Preview = {
+  globalTypes: {
+    theme: {
+      description: "Theme",
+      toolbar: {
+        title: "Theme",
+        icon: "paintbrush",
+        items: ["dusty", "mono"],
+        dynamicTitle: true,
+      },
+    },
+    scheme: {
+      description: "Colour scheme",
+      toolbar: {
+        title: "Scheme",
+        icon: "contrast",
+        items: ["system", "light", "dark"],
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    theme: "dusty",
+    scheme: "system",
+  },
+  decorators: [
+    (Story, context) => {
+      const root = document.documentElement;
+      root.dataset.theme = context.globals.theme;
+      if (context.globals.scheme === "system") {
+        delete root.dataset.colorScheme;
+      } else {
+        root.dataset.colorScheme = context.globals.scheme;
+      }
+      return Story();
+    },
+  ],
   parameters: {
     controls: {
       matchers: {

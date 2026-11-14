@@ -1,0 +1,10 @@
+body {
+  background-color: var(--dusty-surface);
+  color: var(--dusty-text);
+  font-family: system-ui, sans-serif;
+}
+
+.sbdocs .docs-story {
+  background-color: var(--dusty-surface);
+  color: var(--dusty-text);
+}

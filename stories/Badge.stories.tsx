@@ -6,6 +6,9 @@ const meta = {
   component: Badge,
   parameters: { layout: "centered" },
   tags: ["autodocs"],
+  argTypes: {
+    iconPosition: { control: "inline-radio", options: ["left", "right"] },
+  },
   args: {
     label: "New",
   },
