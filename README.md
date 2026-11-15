@@ -1,6 +1,8 @@
 # DustyUI docs
 
-Landing page and Storybook for [DustyUI](https://github.com/w-gluza/dustyui).
+The documentation site for [DustyUI](https://github.com/w-gluza/dustyui), live at [dustyui.com](https://www.dustyui.com/).
+
+It is a Storybook served through a Next.js app. Every story is also a test: it runs in a headless browser with accessibility checks.
 
 ## Preview components
 
@@ -26,10 +28,12 @@ npm link ../dustyui
 
 | Script              | What it does                                                     |
 | ------------------- | ---------------------------------------------------------------- |
-| `npm run dev`       | Landing page on http://localhost:3000                            |
 | `npm run storybook` | Storybook dev server                                             |
+| `npm run dev`       | The Next.js app, serving the Storybook from the last build       |
 | `npm run test`      | Runs every story in a headless browser with accessibility checks |
 | `npm run build`     | Builds Storybook into `public/storybook`, then the Next app      |
 | `npm run lint`      | ESLint, with accessibility rules as errors                       |
 | `npm run typecheck` | Type-checks with TypeScript 7                                    |
 | `npm run format`    | Prettier                                                         |
+
+Run `npx playwright install chromium` once before the first `npm run test`.
