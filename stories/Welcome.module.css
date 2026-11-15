@@ -1,0 +1,39 @@
+.welcome {
+  display: grid;
+  gap: 1rem;
+  max-inline-size: 65ch;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+.welcome :is(h1, p) {
+  margin: 0;
+}
+
+.welcome h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.welcome a {
+  color: inherit;
+  font-weight: var(--dusty-weight-semibold);
+  text-underline-offset: 0.2em;
+}
+
+.welcome a:focus-visible {
+  outline: var(--dusty-focus-ring-width) solid var(--dusty-focus-ring);
+  outline-offset: var(--dusty-focus-ring-offset);
+  border-radius: var(--dusty-radius-sm);
+}
+
+.install {
+  justify-self: start;
+  padding-block: 0.5rem;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--dusty-border);
+  border-radius: var(--dusty-radius-md);
+  background-color: var(--dusty-surface-sunken);
+  font-family: var(--dusty-font-mono);
+  font-size: 0.875rem;
+}

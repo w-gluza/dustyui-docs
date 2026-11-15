@@ -40,6 +40,12 @@ const preview: Preview = {
     },
   ],
   parameters: {
+    options: {
+      storySort: {
+        method: "alphabetical",
+        order: ["Welcome", "Components", "Utilities", "Showcase"],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
