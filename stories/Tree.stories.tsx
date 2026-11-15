@@ -11,7 +11,7 @@ function folder(name: string, ...contents: Folder[]): Folder {
   return {
     id: name,
     name,
-    childCount: contents.length,
+    hasChildren: contents.length > 0,
     children: () => contents,
   };
 }
@@ -42,9 +42,9 @@ import { Tree } from "dustyui";
 />
 \`\`\`
 
-A node needs an \`id\`, a \`childCount\` and a \`children()\` function. \`label\` is required and names the tree for screen readers. \`getRowText\` enables jumping to a row by typing.
+A node needs an \`id\`, a \`hasChildren\` flag and a \`children()\` function. \`children()\` is only called when the row is opened. \`label\` is required and names the tree for screen readers. \`getRowText\` enables jumping to a row by typing.
 
-To control which rows are open, pass \`expanded\` and \`onExpandedChange\`. Otherwise use \`defaultExpanded\`.
+To control which rows are open, pass \`expanded\` and \`onExpandedChange\`. Otherwise use \`defaultExpanded\`. The types reject passing both.
 
 The selected row follows focus. Listen with \`onSelectedChange\`, or pass \`selected\` to choose the row yourself; the tree brings it into view without taking focus.
 
@@ -76,7 +76,7 @@ const meta = {
   argTypes: {
     root: {
       description:
-        "The top node. It needs an id, a childCount and a children() function.",
+        "The top node. It needs an id, a hasChildren flag and a children() function.",
       control: false,
       table: { type: { summary: "TreeNode" } },
       type: { name: "other", value: "", required: true },
@@ -108,7 +108,7 @@ const meta = {
       description:
         "The ids of the rows that start open, when expansion is not controlled.",
       control: false,
-      table: { type: { summary: "Iterable<string>" } },
+      table: { type: { summary: "ReadonlySet<string> | readonly string[]" } },
     },
     selected: {
       description:

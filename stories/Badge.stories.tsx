@@ -8,7 +8,7 @@ const meta = {
   parameters: { layout: "centered" },
   tags: ["autodocs"],
   argTypes: {
-    iconPosition: { control: "inline-radio", options: ["left", "right"] },
+    iconPosition: { control: "inline-radio", options: ["start", "end"] },
   },
   args: {
     label: "New",
@@ -25,8 +25,8 @@ export const Default: Story = {
   },
 };
 
-export const IconLeft: Story = {
-  args: { icon: "★", iconPosition: "left" },
+export const IconStart: Story = {
+  args: { icon: "★", iconPosition: "start" },
   play: async ({ canvas }) => {
     const icon = canvas.getByText("★");
     await expect(icon).toHaveAttribute("aria-hidden", "true");
@@ -34,8 +34,8 @@ export const IconLeft: Story = {
   },
 };
 
-export const IconRight: Story = {
-  args: { icon: "★", iconPosition: "right" },
+export const IconEnd: Story = {
+  args: { icon: "★", iconPosition: "end" },
   play: async ({ canvas }) => {
     const icon = canvas.getByText("★");
     await expect(icon).toHaveAttribute("aria-hidden", "true");

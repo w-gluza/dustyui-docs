@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 import { useState } from "react";
-import { Button, ObjectInspector } from "dustyui";
+import {
+  Button,
+  describeValue,
+  getChildId,
+  getNodeTrail,
+  ObjectInspector,
+  ROOT_ID,
+} from "dustyui";
 import {
   createAdvancedParks,
   createMediumParks,
@@ -22,7 +29,9 @@ import { ObjectInspector } from "dustyui";
 
 \`label\` is required and names the tree for screen readers. The value opens one level deep by default.
 
-To control which rows are open, pass \`expanded\` and \`onExpandedChange\`. Rows are identified by path, such as \`$/.parks/[0]\`, so they stay open when the value is replaced.
+To control which rows are open, pass \`expanded\` and \`onExpandedChange\`. Otherwise use \`defaultExpanded\`. The types reject passing both. Rows are identified by path, such as \`$/.parks/[0]\`, so they stay open when the value is replaced. Build ids with \`getChildId\` instead of writing the strings.
+
+A value is read only when its row is opened. A closed object shows \`{…}\` until then.
 
 It is keyboard operable in the same way as Tree.
 
@@ -35,6 +44,8 @@ Add \`searchable\` for a search field above the tree. It looks in keys and in va
 Add \`showDetails\` for a panel below the tree with the path, type and whole value of the selected row, and buttons that copy the path or the value. Copying never runs a getter.
 
 **Large values**
+
+A list of more than 100 items is grouped into ranges, such as \`Items 0 to 99\`, so opening it never creates a row for every item. \`getNodeTrail\` returns the rows to open on the way to one value, ranges included.
 
 A tree with more than 200 visible rows renders only the rows near the view. Give the tree a height through \`className\` to scroll it on its own; without one it follows the page.
 
@@ -77,7 +88,7 @@ const meta = {
         "The ids of the rows that start open, when expansion is not controlled.",
       control: false,
       table: {
-        type: { summary: "Iterable<string>" },
+        type: { summary: "ReadonlySet<string> | readonly string[]" },
         defaultValue: { summary: '["$"]' },
       },
     },
@@ -136,14 +147,21 @@ export const Small: Story = {
   ),
   play: async ({ canvas, userEvent }) => {
     await userEvent.tab();
-    await userEvent.keyboard("a{ArrowRight}");
+    await userEvent.keyboard("a{ArrowRight}{ArrowRight}{ArrowRight}");
     await expect(
-      canvas.getByRole("treeitem", { name: /Guanaco/u }),
+      canvas.getByRole("treeitem", { name: /^commonName:\s*"Guanaco"/u }),
     ).toBeVisible();
   },
 };
 
 const mediumParks = createMediumParks();
+const continentsId = getChildId(ROOT_ID, {
+  type: "property",
+  key: "continents",
+});
+const everyContinentId = mediumParks.continents.map((_, index) =>
+  getChildId(continentsId, { type: "index", index }),
+);
 
 export const Medium: Story = {
   render: () => (
@@ -154,13 +172,13 @@ export const Medium: Story = {
       <ObjectInspector
         label="National parks of the world"
         value={mediumParks}
-        defaultExpanded={["$", "$/.continents"]}
+        defaultExpanded={[ROOT_ID, continentsId, ...everyContinentId]}
       />
     </Demo>
   ),
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole("treeitem", { name: /Antarctica/u }),
+      canvas.getByRole("treeitem", { name: /^name:\s*"Antarctica"/u }),
     ).toBeVisible();
   },
 };
@@ -202,21 +220,22 @@ export const Tricky: Story = {
   render: () => (
     <Demo
       title="Tricky values"
-      testing="Values that break naive inspectors: a getter that must not be run, an object that contains itself, and an object that refuses to be read."
+      testing="Values that break naive inspectors: a getter that must not be run, an object that contains itself, and an object that refuses to be read once it is opened."
     >
       <ObjectInspector label="Tricky values" value={createTricky()} />
     </Demo>
   ),
-  play: async ({ canvas }) => {
+  play: async ({ canvas, userEvent }) => {
     await expect(
       canvas.getByRole("treeitem", { name: /^expensive/u }),
     ).toHaveTextContent("(...)");
     await expect(
       canvas.getByRole("treeitem", { name: /^self/u }),
     ).toHaveTextContent("[Circular $]");
+    await userEvent.click(canvas.getByRole("treeitem", { name: /^refuses/u }));
     await expect(
       canvas.getByRole("treeitem", { name: /^refuses/u }),
-    ).toHaveTextContent("Uninspectable: this object refuses to be read");
+    ).toHaveTextContent("Could not be read: this object refuses to be read");
   },
 };
 
@@ -233,8 +252,13 @@ export const Primitive: Story = {
   },
 };
 
+const animalsId = getChildId(ROOT_ID, { type: "property", key: "animals" });
+const firstAnimalId = getChildId(animalsId, { type: "index", index: 0 });
+
 function ControlledExample() {
-  const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set(["$"]));
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(
+    new Set([ROOT_ID]),
+  );
   return (
     <Demo
       title="Controlled expansion"
@@ -243,7 +267,9 @@ function ControlledExample() {
       <div className={styles.actions}>
         <Button
           variant="secondary"
-          onClick={() => setExpanded(new Set(["$", "$/.animals"]))}
+          onClick={() =>
+            setExpanded(new Set([ROOT_ID, animalsId, firstAnimalId]))
+          }
         >
           Open animals
         </Button>
@@ -266,7 +292,7 @@ export const ControlledExpansion: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Open animals" }));
     await expect(
-      canvas.getByRole("treeitem", { name: /Guanaco/u }),
+      canvas.getByRole("treeitem", { name: /^commonName:\s*"Guanaco"/u }),
     ).toBeVisible();
 
     await userEvent.click(canvas.getByRole("button", { name: "Close all" }));
@@ -402,7 +428,9 @@ export const Details: Story = {
   play: async ({ canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("treeitem", { name: /^name/u }));
 
-    const details = canvas.getByRole("region", { name: "Selected value" });
+    const details = canvas.getByRole("region", {
+      name: "Selected value in Torres del Paine",
+    });
     await expect(details).toHaveTextContent("$.name");
     await expect(details).toHaveTextContent("Torres del Paine");
     await expect(
@@ -420,17 +448,23 @@ const sightingLog = {
   })),
 };
 
+const sightingsId = getChildId(ROOT_ID, { type: "property", key: "sightings" });
+const firstSightingTrail = getNodeTrail(
+  describeValue(sightingLog),
+  getChildId(sightingsId, { type: "index", index: 0 }),
+).map((node) => node.id);
+
 export const LargeList: Story = {
   render: () => (
     <Demo
       title="Large list"
-      testing="A list of 100,000 items stays quick, because only the rows near the view are rendered. Search and details work across the whole list."
+      testing="A list of 100,000 items stays quick: it is grouped into ranges, so no row is created for an item until its range is opened, and only the rows near the view are rendered. Search and details work across the whole list."
     >
       <ObjectInspector
         label="Sighting log"
         value={sightingLog}
         className={styles.tall}
-        defaultExpanded={["$", "$/.sightings"]}
+        defaultExpanded={firstSightingTrail}
         searchable
         showDetails
       />
@@ -439,11 +473,16 @@ export const LargeList: Story = {
   play: async ({ canvas, userEvent }) => {
     await expect(canvas.getAllByRole("treeitem").length).toBeLessThan(100);
     await expect(
-      canvas.getByRole("treeitem", { name: /^0:/u }),
-    ).toHaveAttribute("aria-setsize", "100000");
+      canvas.getByRole("treeitem", { name: "Items 0 to 9,999" }),
+    ).toHaveAttribute("aria-expanded", "true");
+    await expect(canvas.getByRole("treeitem", { name: /^0:/u })).toBeVisible();
 
     await userEvent.click(canvas.getByRole("treeitem", { name: /^0:/u }));
     await userEvent.keyboard("{End}");
+    await expect(
+      await canvas.findByRole("treeitem", { name: "Items 90,000 to 99,999" }),
+    ).toHaveFocus();
+    await userEvent.keyboard("{ArrowRight}{End}{ArrowRight}{End}");
     await expect(
       await canvas.findByRole("treeitem", { name: /^99999:/u }),
     ).toHaveFocus();

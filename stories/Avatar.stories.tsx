@@ -10,6 +10,9 @@ const meta = {
   component: Avatar,
   parameters: { layout: "centered" },
   tags: ["autodocs"],
+  argTypes: {
+    size: { control: "select", options: ["small", "medium", "large"] },
+  },
   args: {
     name: "Wioletta Gluza",
   },
@@ -33,15 +36,35 @@ export const CustomFallback: Story = {
 };
 
 export const Small: Story = {
-  args: { size: 32 },
+  args: { size: "small" },
   play: async ({ canvas }) => {
     const { width, height } = canvas.getByRole("img").getBoundingClientRect();
     await expect([width, height]).toEqual([32, 32]);
   },
 };
 
+export const Medium: Story = {
+  args: { size: "medium" },
+  play: async ({ canvas }) => {
+    const { width, height } = canvas.getByRole("img").getBoundingClientRect();
+    await expect([width, height]).toEqual([48, 48]);
+  },
+};
+
 export const Large: Story = {
+  args: { size: "large" },
+  play: async ({ canvas }) => {
+    const { width, height } = canvas.getByRole("img").getBoundingClientRect();
+    await expect([width, height]).toEqual([64, 64]);
+  },
+};
+
+export const SizeInPixels: Story = {
   args: { size: 96 },
+  play: async ({ canvas }) => {
+    const { width, height } = canvas.getByRole("img").getBoundingClientRect();
+    await expect([width, height]).toEqual([96, 96]);
+  },
 };
 
 export const WithImage: Story = {
@@ -51,7 +74,7 @@ export const WithImage: Story = {
   play: async ({ canvas }) => {
     const avatar = canvas.getByRole("img", { name: "Wioletta Gluza" });
     await expect(avatar.querySelector("img")).toHaveAttribute("alt", "");
-    await expect(avatar).toHaveTextContent("");
+    await expect(avatar).toHaveTextContent("WG");
   },
 };
 
