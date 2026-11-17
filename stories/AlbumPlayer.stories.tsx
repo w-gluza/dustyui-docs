@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, waitFor } from "storybook/test";
 import { AlbumPlayer, HELIOS } from "./AlbumPlayer";
-import { HeliosArtwork } from "./RecordArtwork";
+import { AlbumArtwork } from "./RecordArtwork";
 import styles from "./Media.module.css";
 
 const meta = {
   title: "Showcase/AlbumPlayer",
   component: AlbumPlayer,
   parameters: { layout: "centered" },
-  args: { album: HELIOS, artwork: <HeliosArtwork />, level: 2 },
+  args: { album: HELIOS, artwork: <AlbumArtwork />, level: 2 },
   decorators: [(Story) => <div className={styles.sleeve}>{Story()}</div>],
 } satisfies Meta<typeof AlbumPlayer>;
 
