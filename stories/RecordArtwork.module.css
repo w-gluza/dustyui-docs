@@ -1,0 +1,27 @@
+.artwork {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.night,
+.ground {
+  fill: var(--dusty-illustration-shadow);
+}
+
+.halo {
+  fill: var(--dusty-illustration-secondary);
+}
+
+.glow {
+  fill: var(--dusty-illustration-highlight);
+}
+
+.sun,
+.wave {
+  fill: var(--dusty-illustration-primary);
+}
+
+.moon {
+  fill: var(--dusty-illustration-highlight);
+}
