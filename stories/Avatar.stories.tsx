@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 import { Avatar } from "dustyui";
+import { DesertPortrait } from "./DesertArtwork";
+import styles from "./Demo.module.css";
 
 const placeholderPortrait =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23bbb'/%3E%3Ccircle cx='32' cy='26' r='12' fill='%23444'/%3E%3Cellipse cx='32' cy='60' rx='22' ry='18' fill='%23444'/%3E%3C/svg%3E";
@@ -12,6 +14,7 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     size: { control: "select", options: ["small", "medium", "large"] },
+    ring: { control: "select", options: [undefined, "neutral", "accent"] },
   },
   args: {
     name: "Wioletta Gluza",
@@ -20,6 +23,44 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const RingSizes: Story = {
+  render: (args) => (
+    <div className={styles.avatars}>
+      <Avatar {...args} size={128} ring="neutral" image={<DesertPortrait />} />
+      <Avatar {...args} size={96} ring="accent" image={<DesertPortrait />} />
+      <Avatar {...args} size={64} ring="neutral" image={<DesertPortrait />} />
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    const widths = canvas
+      .getAllByRole("img", { name: "Wioletta Gluza" })
+      .map((avatar) => avatar.getBoundingClientRect().width);
+    await expect(widths).toEqual([128, 96, 64]);
+  },
+};
+
+export const NeutralRing: Story = {
+  args: { ring: "neutral", image: <DesertPortrait /> },
+  play: async ({ canvas }) => {
+    const avatar = canvas.getByRole("img", { name: "Wioletta Gluza" });
+    const { width, height } = avatar.getBoundingClientRect();
+    await expect([width, height]).toEqual([64, 64]);
+    await expect(getComputedStyle(avatar).borderTopWidth).toBe("1px");
+  },
+};
+
+export const AccentRing: Story = {
+  args: { ring: "accent", image: <DesertPortrait /> },
+  play: async ({ canvas }) => {
+    const avatar = canvas.getByRole("img", { name: "Wioletta Gluza" });
+    const { width, height } = avatar.getBoundingClientRect();
+    await expect([width, height]).toEqual([64, 64]);
+    await expect(
+      Number.parseFloat(getComputedStyle(avatar).borderTopWidth),
+    ).toBeGreaterThan(1);
+  },
+};
 
 export const Initials: Story = {
   play: async ({ canvas }) => {

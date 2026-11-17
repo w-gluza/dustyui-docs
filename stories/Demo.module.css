@@ -24,6 +24,13 @@
   gap: 0.5rem;
 }
 
+.avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+}
+
 .narrow {
   inline-size: 16rem;
   max-inline-size: 100%;

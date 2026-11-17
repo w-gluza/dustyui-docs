@@ -1,0 +1,63 @@
+.sky {
+  fill: var(--dusty-surface-sunken);
+}
+
+.sun,
+.dune {
+  fill: var(--dusty-illustration-highlight);
+}
+
+.hill {
+  fill: var(--dusty-illustration-primary);
+}
+
+.hillShade {
+  fill: color-mix(
+    in oklab,
+    var(--dusty-illustration-primary),
+    var(--dusty-illustration-shadow) 22%
+  );
+}
+
+.ridge {
+  fill: var(--dusty-illustration-secondary);
+}
+
+.mountain {
+  fill: var(--dusty-illustration-shadow);
+}
+
+.arch {
+  fill: color-mix(
+    in oklab,
+    var(--dusty-illustration-highlight),
+    var(--dusty-surface-raised) 50%
+  );
+}
+
+.archWarm {
+  fill: color-mix(
+    in oklab,
+    var(--dusty-illustration-primary),
+    var(--dusty-illustration-highlight) 55%
+  );
+}
+
+.archLight {
+  fill: color-mix(
+    in oklab,
+    var(--dusty-illustration-highlight),
+    var(--dusty-surface-raised) 82%
+  );
+}
+
+.landscape {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.portrait {
+  inline-size: 100%;
+  block-size: 100%;
+}
