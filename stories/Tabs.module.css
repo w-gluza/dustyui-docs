@@ -1,0 +1,73 @@
+.frame {
+  inline-size: min(34rem, calc(100vw - 2rem));
+}
+
+.narrow {
+  inline-size: min(17rem, calc(100vw - 2rem));
+}
+
+.stack {
+  display: grid;
+  gap: 2.5rem;
+  inline-size: min(34rem, calc(100vw - 2rem));
+}
+
+.panel {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.panel > :where(h3, p) {
+  margin: 0;
+}
+
+.panel > h3 {
+  font-weight: var(--dusty-weight-semibold);
+  font-size: 1.125rem;
+}
+
+.panel > p {
+  color: var(--dusty-text-muted);
+  line-height: 1.5;
+}
+
+.caption {
+  margin: 0 0 0.75rem;
+  color: var(--dusty-text-muted);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.status {
+  margin: 0 0 1rem;
+  color: var(--dusty-text-muted);
+  font-size: 0.875rem;
+}
+
+.meter {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.meter > .meterHeader {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.meterLabel {
+  color: var(--dusty-text-muted);
+  font-weight: var(--dusty-weight-semibold);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.meterValue {
+  color: var(--dusty-text);
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
