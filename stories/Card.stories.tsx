@@ -11,28 +11,15 @@ import {
   CardTitle,
 } from "dustyui";
 import { DesertLandscape, DesertPortrait } from "./DesertArtwork";
+import {
+  AUTHOR,
+  Author,
+  DESCRIPTION,
+  MonumentValleyCard,
+  TITLE,
+} from "./MonumentValleyCard";
 import { ArchPoster } from "./PosterArtwork";
 import styles from "./Card.module.css";
-
-const AUTHOR = "Wioletta Gluza";
-const TITLE = "Monument Valley";
-const DESCRIPTION =
-  "Sandstone buttes rising 300 metres from the desert floor on the Arizona-Utah border, in the heart of the Navajo Nation.";
-
-function Author() {
-  return (
-    <>
-      <Avatar
-        name={AUTHOR}
-        size={44}
-        ring="neutral"
-        decorative
-        image={<DesertPortrait />}
-      />
-      <span className={styles.author}>{AUTHOR}</span>
-    </>
-  );
-}
 
 const meta = {
   title: "Components/Card",
@@ -50,20 +37,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const MonumentValley: Story = {
-  render: (args) => (
-    <Card {...args}>
-      <CardMedia label="Featured">
-        <DesertLandscape />
-      </CardMedia>
-      <CardContent>
-        <CardTitle level={2}>{TITLE}</CardTitle>
-        <CardDescription>{DESCRIPTION}</CardDescription>
-        <CardFooter end="6 min read">
-          <Author />
-        </CardFooter>
-      </CardContent>
-    </Card>
-  ),
+  render: (args) => <MonumentValleyCard {...args} />,
   play: async ({ canvas }) => {
     const card = canvas.getByRole("article");
     await expect(

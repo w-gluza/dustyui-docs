@@ -1,13 +1,18 @@
 .welcome {
   display: grid;
-  gap: 1rem;
-  max-inline-size: 65ch;
+  gap: 2rem;
   font-family: system-ui, sans-serif;
   line-height: 1.5;
 }
 
-.welcome :is(h1, p) {
+.welcome :is(h1, h2, p) {
   margin: 0;
+}
+
+.intro {
+  display: grid;
+  gap: 1rem;
+  max-inline-size: 65ch;
 }
 
 .welcome h1 {
@@ -36,4 +41,102 @@
   background-color: var(--dusty-surface-sunken);
   font-family: var(--dusty-font-mono);
   font-size: 0.875rem;
+}
+
+.board {
+  container-type: inline-size;
+  display: grid;
+  gap: 1.5rem;
+  max-inline-size: 60rem;
+  padding: 2rem;
+  border: 1px solid var(--dusty-border);
+  border-radius: 1.5rem;
+  background-color: var(--dusty-surface-raised);
+}
+
+.boardTitle {
+  color: var(--dusty-text-muted);
+  font-weight: var(--dusty-weight-semibold);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.boardGrid {
+  display: grid;
+  gap: 2rem;
+}
+
+.column {
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+  min-inline-size: 0;
+}
+
+@container (min-inline-size: 44rem) {
+  .boardGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .column + .column {
+    padding-inline-start: 2rem;
+    border-inline-start: 1px solid var(--dusty-border);
+  }
+}
+
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.rule {
+  inline-size: 100%;
+  margin: 0;
+  border: 0;
+  border-block-start: 1px solid var(--dusty-border);
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  color: var(--dusty-text-muted);
+  font-size: 0.75rem;
+  list-style: none;
+}
+
+.swatches li {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.swatch {
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: var(--dusty-radius-md);
+}
+
+.swatchAction {
+  background-color: var(--dusty-action);
+}
+
+.swatchPrimary {
+  background-color: var(--dusty-illustration-primary);
+}
+
+.swatchSecondary {
+  background-color: var(--dusty-illustration-secondary);
+}
+
+.swatchHighlight {
+  background-color: var(--dusty-illustration-highlight);
+}
+
+.swatchShadow {
+  background-color: var(--dusty-illustration-shadow);
 }
