@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn, waitFor } from "storybook/test";
 import { Button } from "dustyui";
+import { ArchIcon } from "./icons";
+import styles from "./Demo.module.css";
 
 const meta = {
   title: "Components/Button",
@@ -8,7 +10,8 @@ const meta = {
   parameters: { layout: "centered" },
   tags: ["autodocs"],
   argTypes: {
-    variant: { control: "select", options: ["primary", "secondary"] },
+    variant: { control: "select", options: ["primary", "secondary", "plain"] },
+    iconPosition: { control: "inline-radio", options: ["start", "end"] },
     size: { control: "select", options: ["small", "medium", "large"] },
   },
   args: {
@@ -20,6 +23,36 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Variants: Story = {
+  render: (args) => (
+    <div className={styles.avatars}>
+      <Button {...args}>Get started</Button>
+      <Button
+        {...args}
+        variant="secondary"
+        icon={<ArchIcon />}
+        iconPosition="end"
+      >
+        Learn more
+      </Button>
+      <Button {...args} variant="plain">
+        Cancel
+      </Button>
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("button")).toHaveLength(3);
+    await expect(
+      canvas.getByRole("button", { name: "Learn more" }),
+    ).toBeVisible();
+  },
+};
+
+export const VariantsDark: Story = {
+  ...Variants,
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
 export const Primary: Story = {
   args: { variant: "primary" },
   play: async ({ args, canvas, userEvent }) => {
@@ -30,6 +63,27 @@ export const Primary: Story = {
 
 export const Secondary: Story = {
   args: { variant: "secondary" },
+};
+
+export const Plain: Story = {
+  args: { variant: "plain", children: "Cancel" },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Cancel" }));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+
+export const WithIcon: Story = {
+  args: {
+    variant: "secondary",
+    children: "Learn more",
+    icon: <ArchIcon />,
+    iconPosition: "end",
+  },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: "Learn more" });
+    await expect(button.querySelector("svg")).not.toBeNull();
+  },
 };
 
 export const Small: Story = {
