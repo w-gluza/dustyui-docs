@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn } from "storybook/test";
 import { IconButton } from "dustyui";
+import { PlayIcon } from "./icons";
 
 const closeIcon = (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -14,7 +15,8 @@ const meta = {
   parameters: { layout: "centered" },
   tags: ["autodocs"],
   argTypes: {
-    variant: { control: "select", options: ["primary", "secondary"] },
+    variant: { control: "select", options: ["primary", "secondary", "plain"] },
+    shape: { control: "select", options: ["rounded", "pill"] },
     size: { control: "select", options: ["small", "medium", "large"] },
     icon: { control: false },
   },
@@ -37,6 +39,27 @@ export const Primary: Story = {
 
 export const Secondary: Story = {
   args: { variant: "secondary" },
+};
+
+export const Plain: Story = {
+  args: { variant: "plain" },
+};
+
+export const Round: Story = {
+  args: { shape: "pill" },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: "Close" });
+    const box = button.getBoundingClientRect();
+
+    await expect(box.width).toBe(box.height);
+    await expect(
+      Number.parseFloat(getComputedStyle(button).borderTopLeftRadius),
+    ).toBeGreaterThanOrEqual(box.height / 2);
+  },
+};
+
+export const RoundPlayButton: Story = {
+  args: { shape: "pill", size: "large", label: "Play", icon: <PlayIcon /> },
 };
 
 export const Small: Story = {

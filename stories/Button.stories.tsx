@@ -13,6 +13,7 @@ const meta = {
     variant: { control: "select", options: ["primary", "secondary", "plain"] },
     iconPosition: { control: "inline-radio", options: ["start", "end"] },
     size: { control: "select", options: ["small", "medium", "large"] },
+    shape: { control: "select", options: ["rounded", "pill"] },
   },
   args: {
     children: "Save",
@@ -83,6 +84,17 @@ export const WithIcon: Story = {
   play: async ({ canvas }) => {
     const button = canvas.getByRole("button", { name: "Learn more" });
     await expect(button.querySelector("svg")).not.toBeNull();
+  },
+};
+
+export const Pill: Story = {
+  args: { shape: "pill" },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button");
+
+    await expect(
+      Number.parseFloat(getComputedStyle(button).borderTopLeftRadius),
+    ).toBeGreaterThanOrEqual(button.getBoundingClientRect().height / 2);
   },
 };
 
