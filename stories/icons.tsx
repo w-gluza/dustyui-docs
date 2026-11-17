@@ -58,3 +58,66 @@ export function ArchIcon() {
     </svg>
   );
 }
+
+export function PlayIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path d="M6 3.5v13l10.5-6.5z" />
+    </svg>
+  );
+}
+
+export function PauseIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path d="M5 3.5h3.5v13H5zM11.5 3.5H15v13h-3.5z" />
+    </svg>
+  );
+}
+
+export function MinusIcon() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M4 10h12" />
+    </svg>
+  );
+}
+
+export function PlusIcon() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M4 10h12M10 4v12" />
+    </svg>
+  );
+}
+
+export function ArrowUpRightIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6 14 14 6M7.5 6H14v6.5" />
+    </svg>
+  );
+}
