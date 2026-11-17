@@ -93,21 +93,21 @@
   gap: 1.75rem;
 }
 
-.group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
-}
-
 .guideCard {
   display: grid;
   gap: 1.5rem;
   align-content: start;
 }
 
-.guideCard :is(h3, p) {
+.guideCard :is(h3, h4, p) {
   margin: 0;
+}
+
+.guideTop {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .guideIntro {
@@ -126,6 +126,13 @@
   display: flex;
   gap: 1rem;
   align-items: center;
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--dusty-border);
+}
+
+.glance {
+  display: grid;
+  gap: 0.5rem;
   padding-block-start: 1.5rem;
   border-block-start: 1px solid var(--dusty-border);
 }

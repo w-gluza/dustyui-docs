@@ -172,8 +172,14 @@ export function HeartIcon() {
   );
 }
 
-export function ChatIcon() {
+export function PinIcon() {
   return (
-    <LineIcon path="M10 3.5a6.5 6.5 0 0 0-5.6 9.8L3.5 16.5l3.3-.9A6.5 6.5 0 1 0 10 3.5z" />
+    <LineIcon path="M10 17.5S4.5 12.7 4.5 8.5a5.5 5.5 0 0 1 11 0c0 4.2-5.5 9-5.5 9zM10 6.75a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5z" />
+  );
+}
+
+export function SunIcon() {
+  return (
+    <LineIcon path="M10 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM10 2v1.5M10 16.5V18M2 10h1.5M16.5 10H18M4.3 4.3l1.1 1.1M14.6 14.6l1.1 1.1M4.3 15.7l1.1-1.1M14.6 5.4l1.1-1.1" />
   );
 }

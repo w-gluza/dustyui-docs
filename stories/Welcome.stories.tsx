@@ -5,18 +5,18 @@ import {
   Avatar,
   Badge,
   BarChart,
-  Button,
   CopyButton,
   IconButton,
   MilestoneProgress,
   PlaybackControls,
   ProgressBar,
   RecordSleeve,
+  StatList,
   TrackList,
 } from "dustyui";
 import { HELIOS } from "./AlbumPlayer";
 import { DesertPortrait } from "./DesertArtwork";
-import { ChatIcon, HeartIcon } from "./icons";
+import { ClockIcon, HeartIcon, PinIcon, SunIcon } from "./icons";
 import { MonumentValleyCard } from "./MonumentValleyCard";
 import { AlbumArtwork } from "./RecordArtwork";
 import styles from "./Welcome.module.css";
@@ -124,13 +124,32 @@ function FeaturedPlayer() {
   );
 }
 
+const TRIP_STATS = [
+  { label: "Suggested duration", value: "Half-day", icon: <ClockIcon /> },
+  { label: "Experience", value: "Scenic drive", icon: <PinIcon /> },
+  { label: "Best light", value: "Sunrise", icon: <SunIcon /> },
+];
+
 function GuideCard() {
   const [saved, setSaved] = useState(false);
 
   return (
     <article className={styles.guideCard} aria-labelledby="guide-title">
       <div className={styles.guideIntro}>
-        <p className={styles.fieldLabel}>Your local contact</p>
+        <div className={styles.guideTop}>
+          <p className={styles.fieldLabel}>Your local contact</p>
+          <IconButton
+            variant={saved ? "primary" : "secondary"}
+            shape="pill"
+            size="small"
+            label="Save to favourites"
+            aria-pressed={saved}
+            icon={<HeartIcon />}
+            onClick={() => {
+              setSaved(!saved);
+            }}
+          />
+        </div>
         <h3 id="guide-title" className={styles.guideTitle}>
           Meet your guide.
         </h3>
@@ -149,20 +168,11 @@ function GuideCard() {
           <p className={styles.status}>Available for enquiries</p>
         </div>
       </div>
-      <div className={styles.group}>
-        <Button shape="pill" icon={<ChatIcon />}>
-          Get in touch
-        </Button>
-        <IconButton
-          variant={saved ? "primary" : "secondary"}
-          shape="pill"
-          label="Save to favourites"
-          aria-pressed={saved}
-          icon={<HeartIcon />}
-          onClick={() => {
-            setSaved(!saved);
-          }}
-        />
+      <div className={styles.glance}>
+        <h4 id="glance-title" className={styles.fieldLabel}>
+          Trip at a glance
+        </h4>
+        <StatList aria-labelledby="glance-title" stats={TRIP_STATS} />
       </div>
     </article>
   );
@@ -175,7 +185,7 @@ function Preview() {
         <GuideCard />
       </Section>
       <Section number="02" title="Editorial" bare fill>
-        <MonumentValleyCard titleLevel={3} />
+        <MonumentValleyCard titleLevel={3} extended />
       </Section>
       <Section number="03" title="Data and progress">
         <div className={styles.data}>
@@ -266,9 +276,7 @@ export const Welcome: Story = {
     await expect(
       canvas.getByRole("button", { name: "Save to favourites" }),
     ).toHaveAttribute("aria-pressed", "false");
-    await expect(
-      canvas.getByRole("button", { name: "Get in touch" }),
-    ).toBeVisible();
+    await expect(canvas.getByText("Scenic drive")).toBeVisible();
     await expect(
       canvas.getByRole("progressbar", { name: "Uploading artwork / 001" }),
     ).toHaveAttribute("value", "0.62");

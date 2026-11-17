@@ -17,6 +17,9 @@ export const TITLE = "Monument Valley";
 export const DESCRIPTION =
   "Sandstone buttes rising 300 metres from the desert floor on the Arizona-Utah border, in the heart of the Navajo Nation.";
 
+export const MORE =
+  "Shaped by millions of years of erosion, the valley is known for its striking rock formations, vast open landscapes.";
+
 export function Author() {
   return (
     <>
@@ -34,10 +37,12 @@ export function Author() {
 
 interface MonumentValleyCardProps extends CardProps {
   titleLevel?: CardTitleLevel | undefined;
+  extended?: boolean | undefined;
 }
 
 export function MonumentValleyCard({
   titleLevel = 2,
+  extended = false,
   ...props
 }: MonumentValleyCardProps) {
   return (
@@ -48,6 +53,7 @@ export function MonumentValleyCard({
       <CardContent>
         <CardTitle level={titleLevel}>{TITLE}</CardTitle>
         <CardDescription>{DESCRIPTION}</CardDescription>
+        {extended ? <CardDescription>{MORE}</CardDescription> : null}
         <CardFooter end="6 min read">
           <Author />
         </CardFooter>
