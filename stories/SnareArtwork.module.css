@@ -1,0 +1,34 @@
+.artwork {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.ground {
+  fill: var(--dusty-illustration-shadow);
+}
+
+.shell {
+  fill: var(--dusty-illustration-primary);
+}
+
+.head {
+  fill: color-mix(in oklab, var(--dusty-illustration-highlight) 30%, white);
+}
+
+.rim {
+  fill: none;
+  stroke: var(--dusty-illustration-secondary);
+  stroke-width: 2.5;
+}
+
+.stick {
+  fill: none;
+  stroke: var(--dusty-illustration-highlight);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.sun {
+  fill: var(--dusty-action);
+}
