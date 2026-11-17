@@ -121,3 +121,47 @@ export function ArrowUpRightIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+function LineIcon({ path }: { path: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={path} />
+    </svg>
+  );
+}
+
+export function ClockIcon() {
+  return (
+    <LineIcon path="M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM10 6v4.25H6.5" />
+  );
+}
+
+export function CalendarIcon() {
+  return (
+    <LineIcon path="M3.5 5h13v11.5h-13zM3.5 8.5h13M7 3v3M13 3v3M7 11.5h.01M10 11.5h.01M13 11.5h.01M7 14h.01M10 14h.01" />
+  );
+}
+
+export function HistoryIcon() {
+  return (
+    <LineIcon path="M3.2 10a6.8 6.8 0 1 0 2-4.8L3 7.4M3 3.5v3.9h3.9M10 6.5V10l2.5 1.5" />
+  );
+}
+
+export function WaveformIcon() {
+  return <LineIcon path="M3 8.5v3M6.5 5.5v9M10 3v14M13.5 5.5v9M17 8.5v3" />;
+}
+
+export function HourglassIcon() {
+  return (
+    <LineIcon path="M5.5 3h9M5.5 17h9M6.5 3c0 4 3.5 4.5 3.5 7s-3.5 3-3.5 7M13.5 3c0 4-3.5 4.5-3.5 7s3.5 3 3.5 7" />
+  );
+}
