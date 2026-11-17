@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "storybook": "storybook dev -p 6006",
+    "storybook:local": "DUSTYUI_SRC=../dustyui/src storybook dev -p 6006",
     "build:storybook": "storybook build --output-dir public/storybook",
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
