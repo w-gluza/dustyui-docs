@@ -6,6 +6,7 @@ import {
   Badge,
   BarChart,
   CopyButton,
+  ExpandableCard,
   IconButton,
   MilestoneProgress,
   PlaybackControls,
@@ -15,7 +16,8 @@ import {
   TrackList,
 } from "dustyui";
 import { HELIOS } from "./AlbumPlayer";
-import { DesertPortrait } from "./DesertArtwork";
+import { DesertPortrait, FujiLandscape } from "./DesertArtwork";
+import expandable from "./ExpandableCard.module.css";
 import { ClockIcon, HeartIcon, PinIcon, SunIcon } from "./icons";
 import { MonumentValleyCard } from "./MonumentValleyCard";
 import { AlbumArtwork } from "./RecordArtwork";
@@ -33,12 +35,44 @@ const WEEK = [
 
 const LAST_TRACK = HELIOS.tracks.length - 1;
 
+const FUJI_FACTS = [
+  ["Elevation", "3,776 m"],
+  ["Climbing season", "July to September"],
+  ["Best light", "Sunrise"],
+] as const;
+
+function FujiCard() {
+  return (
+    <ExpandableCard
+      title="Mount Fuji"
+      level={3}
+      media={<FujiLandscape />}
+      expandedMedia={<FujiLandscape animated />}
+      summary="Japan's highest peak, a near-perfect cone 100 kilometres from Tokyo."
+    >
+      <dl className={expandable.facts}>
+        {FUJI_FACTS.map(([term, value]) => (
+          <div key={term}>
+            <dt>{term}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+      <p>
+        Most climbers start from the fifth station and reach the summit in five
+        to seven hours. Clear views are most likely on winter mornings.
+      </p>
+    </ExpandableCard>
+  );
+}
+
 interface SectionProps {
   number: string;
   title: string;
   status?: ReactNode;
   bare?: boolean;
   fill?: boolean;
+  wide?: boolean;
   children: ReactNode;
 }
 
@@ -48,10 +82,15 @@ function Section({
   status,
   bare,
   fill,
+  wide,
   children,
 }: SectionProps) {
   return (
-    <section className={styles.section} data-fill={fill || undefined}>
+    <section
+      className={styles.section}
+      data-fill={fill || undefined}
+      data-wide={wide || undefined}
+    >
       <header className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>
           {number} / {title}
@@ -70,8 +109,9 @@ function FeaturedPlayer() {
 
   return (
     <Section
-      number="04"
+      number="03"
       title="Featured experiment"
+      wide
       status={
         <Badge
           label={playing ? "Playing" : "Paused"}
@@ -187,7 +227,16 @@ function Preview() {
       <Section number="02" title="Editorial" bare fill>
         <MonumentValleyCard titleLevel={3} extended />
       </Section>
-      <Section number="03" title="Data and progress">
+      <FeaturedPlayer />
+      <Section
+        number="04"
+        title="Expandable card"
+        status={<Badge label="Click to open" />}
+        bare
+      >
+        <FujiCard />
+      </Section>
+      <Section number="05" title="Data and progress">
         <div className={styles.data}>
           <ProgressBar
             variant="editorial"
@@ -205,7 +254,6 @@ function Preview() {
           <BarChart label="Practice this week" bars={WEEK} highlighted={3} />
         </div>
       </Section>
-      <FeaturedPlayer />
     </div>
   );
 }
@@ -269,7 +317,10 @@ export const Welcome: Story = {
     await expect(
       canvas.getByRole("heading", { level: 3, name: "Monument Valley" }),
     ).toBeVisible();
-    await expect(canvas.getAllByRole("heading", { level: 2 })).toHaveLength(4);
+    await expect(canvas.getAllByRole("heading", { level: 2 })).toHaveLength(5);
+    await expect(
+      canvas.getByRole("button", { name: "Mount Fuji" }),
+    ).toHaveAttribute("aria-expanded", "false");
     await expect(
       canvas.getByRole("article", { name: "Meet your guide." }),
     ).toBeVisible();

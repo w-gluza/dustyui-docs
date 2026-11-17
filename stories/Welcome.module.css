@@ -209,4 +209,14 @@
   .section[data-fill] {
     align-self: stretch;
   }
+
+  .section[data-wide] {
+    grid-column: 1 / -1;
+  }
+
+  .section[data-wide] .player {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    align-items: center;
+  }
 }
