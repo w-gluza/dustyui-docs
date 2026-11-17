@@ -3,6 +3,7 @@ import { expect } from "storybook/test";
 import { Avatar, Badge, Button, IconButton, ObjectInspector } from "dustyui";
 import { createEveryKind, createTricky } from "./data/values";
 import { Demo } from "./Demo";
+import { SparkleIcon } from "./icons";
 import styles from "./Demo.module.css";
 
 const everyKind = createEveryKind();
@@ -19,7 +20,7 @@ function AllComponents() {
         <Button variant="secondary">Cancel</Button>
         <Button loading>Saving</Button>
         <IconButton label="Close" icon="×" />
-        <Badge label="New" icon="★" />
+        <Badge label="New" icon={<SparkleIcon />} />
         <Avatar name="Wioletta Gluza" size={40} />
       </div>
       <ObjectInspector
