@@ -1,0 +1,36 @@
+.artwork {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  overflow: visible;
+}
+
+.arch {
+  fill: var(--dusty-illustration-shadow);
+}
+
+.opening {
+  fill: var(--dusty-surface-raised);
+}
+
+.sun {
+  fill: var(--dusty-illustration-highlight);
+}
+
+.moon {
+  fill: color-mix(
+    in oklab,
+    var(--dusty-illustration-primary),
+    var(--dusty-surface-raised) 25%
+  );
+}
+
+.core {
+  fill: var(--dusty-illustration-primary);
+  stroke: var(--dusty-action);
+  stroke-width: 11;
+}
+
+.leaf {
+  fill: var(--dusty-illustration-secondary);
+}
