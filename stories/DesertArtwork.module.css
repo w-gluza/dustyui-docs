@@ -19,6 +19,14 @@
   );
 }
 
+.ember {
+  fill: color-mix(
+    in oklab,
+    var(--dusty-illustration-primary),
+    var(--dusty-status-danger) 35%
+  );
+}
+
 .ridge {
   fill: var(--dusty-illustration-secondary);
 }
@@ -64,4 +72,49 @@
 .portrait {
   inline-size: 100%;
   block-size: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animated :is(.sun, .mountain, .deep, .ridge, .hill) {
+    animation: settle 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animated .sun {
+    --settle-from: 0 70px;
+  }
+
+  .animated :is(.mountain, .deep) {
+    --settle-from: -28px 0;
+  }
+
+  .animated .ridge {
+    --settle-from: 22px 0;
+  }
+
+  .animated .hill {
+    --settle-from: 0 12px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .layered :is(.far, .near) {
+    animation: settle 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .layered .far {
+    --settle-scale: 1.08;
+
+    transform-origin: 50% 70%;
+  }
+
+  .layered .near {
+    --settle-from: 0 36px;
+  }
+}
+
+@keyframes settle {
+  from {
+    scale: var(--settle-scale, 1);
+    translate: var(--settle-from, 0 0);
+  }
 }

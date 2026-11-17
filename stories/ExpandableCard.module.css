@@ -1,0 +1,31 @@
+.frame {
+  inline-size: min(22rem, 100%);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  inline-size: min(52rem, calc(100vw - 2rem));
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.75rem;
+  margin-block: 0 1rem;
+  padding-block: 0.75rem;
+  border-block: 1px solid var(--dusty-border);
+}
+
+.facts dt {
+  color: var(--dusty-text-muted);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: var(--dusty-weight-semibold);
+}
