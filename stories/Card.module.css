@@ -1,0 +1,8 @@
+.frame {
+  inline-size: 26rem;
+  max-inline-size: 100%;
+}
+
+.author {
+  font-weight: var(--dusty-weight-semibold);
+}
