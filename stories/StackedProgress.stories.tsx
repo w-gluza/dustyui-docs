@@ -62,3 +62,18 @@ export const Full: Story = {
     ],
   },
 };
+
+export const GridLegend: Story = {
+  args: {
+    label: "Technique balance",
+    size: "small",
+    legend: "grid",
+    max: 100,
+    segments: [
+      { label: "Rolls", value: 54 },
+      { label: "Diddles", value: 46 },
+      { label: "Flams", value: 0 },
+      { label: "Drags", value: 0 },
+    ],
+  },
+};
