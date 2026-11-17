@@ -13,6 +13,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const Interactions: Story = {
+  tags: ["!dev"],
+  globals: { theme: "dusty", scheme: "dark" },
   play: async ({ canvas, userEvent }) => {
     const balance = canvas.getByRole("list", { name: "Technique balance" });
 
