@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 import { RecordSleeve } from "dustyui";
-import { HeliosArtwork } from "./RecordArtwork";
+import { AlbumArtwork } from "./RecordArtwork";
 import styles from "./Media.module.css";
 
 const meta = {
@@ -9,7 +9,7 @@ const meta = {
   component: RecordSleeve,
   parameters: { layout: "centered" },
   tags: ["autodocs"],
-  args: { artwork: <HeliosArtwork /> },
+  args: { artwork: <AlbumArtwork /> },
 } satisfies Meta<typeof RecordSleeve>;
 
 export default meta;

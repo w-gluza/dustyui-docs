@@ -4,24 +4,30 @@
   block-size: 100%;
 }
 
-.night,
-.ground {
+.night {
   fill: var(--dusty-illustration-shadow);
 }
 
-.halo {
+.ink {
+  fill: color-mix(in oklab, var(--dusty-illustration-shadow), black 40%);
+}
+
+.paper {
+  fill: color-mix(in oklab, var(--dusty-illustration-highlight) 25%, white);
+}
+
+.sage {
   fill: var(--dusty-illustration-secondary);
 }
 
-.glow {
-  fill: var(--dusty-illustration-highlight);
-}
-
-.sun,
-.wave {
+.coral {
   fill: var(--dusty-illustration-primary);
 }
 
-.moon {
+.butter {
   fill: var(--dusty-illustration-highlight);
+}
+
+.accent {
+  fill: var(--dusty-action);
 }
