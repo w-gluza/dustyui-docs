@@ -165,3 +165,15 @@ export function HourglassIcon() {
     <LineIcon path="M5.5 3h9M5.5 17h9M6.5 3c0 4 3.5 4.5 3.5 7s-3.5 3-3.5 7M13.5 3c0 4-3.5 4.5-3.5 7s3.5 3 3.5 7" />
   );
 }
+
+export function HeartIcon() {
+  return (
+    <LineIcon path="M10 16.5S3.5 12.6 3.5 8a3.4 3.4 0 0 1 6.5-1.4A3.4 3.4 0 0 1 16.5 8c0 4.6-6.5 8.5-6.5 8.5z" />
+  );
+}
+
+export function ChatIcon() {
+  return (
+    <LineIcon path="M10 3.5a6.5 6.5 0 0 0-5.6 9.8L3.5 16.5l3.3-.9A6.5 6.5 0 1 0 10 3.5z" />
+  );
+}

@@ -1,73 +1,202 @@
+import { useState, type ReactNode } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
-import { Avatar, Badge, Button, IconButton } from "dustyui";
+import {
+  Avatar,
+  Badge,
+  BarChart,
+  Button,
+  CopyButton,
+  IconButton,
+  MilestoneProgress,
+  PlaybackControls,
+  ProgressBar,
+  RecordSleeve,
+  TrackList,
+} from "dustyui";
+import { HELIOS } from "./AlbumPlayer";
 import { DesertPortrait } from "./DesertArtwork";
-import { ArchIcon, SparkleIcon, StarIcon } from "./icons";
+import { ChatIcon, HeartIcon } from "./icons";
 import { MonumentValleyCard } from "./MonumentValleyCard";
+import { AlbumArtwork } from "./RecordArtwork";
 import styles from "./Welcome.module.css";
 
-const SWATCHES = [
-  ["action", styles.swatchAction],
-  ["primary", styles.swatchPrimary],
-  ["secondary", styles.swatchSecondary],
-  ["highlight", styles.swatchHighlight],
-  ["shadow", styles.swatchShadow],
-] as const;
+const WEEK = [
+  { label: "M", value: 12, description: "Monday, 12 minutes" },
+  { label: "T", value: 25, description: "Tuesday, 25 minutes" },
+  { label: "W", value: 0, description: "Wednesday, no practice" },
+  { label: "T", value: 18, description: "Thursday, 18 minutes" },
+  { label: "F", value: 0, description: "Friday, no practice" },
+  { label: "S", value: 0, description: "Saturday, no practice" },
+  { label: "S", value: 0, description: "Sunday, no practice" },
+];
+
+const LAST_TRACK = HELIOS.tracks.length - 1;
+
+interface SectionProps {
+  number: string;
+  title: string;
+  status?: ReactNode;
+  bare?: boolean;
+  fill?: boolean;
+  children: ReactNode;
+}
+
+function Section({
+  number,
+  title,
+  status,
+  bare,
+  fill,
+  children,
+}: SectionProps) {
+  return (
+    <section className={styles.section} data-fill={fill || undefined}>
+      <header className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>
+          {number} / {title}
+        </h2>
+        {status}
+      </header>
+      {bare ? children : <div className={styles.surface}>{children}</div>}
+    </section>
+  );
+}
+
+function FeaturedPlayer() {
+  const [playing, setPlaying] = useState(true);
+  const [track, setTrack] = useState(1);
+  const current = HELIOS.tracks[track];
+
+  return (
+    <Section
+      number="04"
+      title="Featured experiment"
+      status={
+        <Badge
+          label={playing ? "Playing" : "Paused"}
+          variant="soft"
+          tone={playing ? "accent" : "neutral"}
+        />
+      }
+    >
+      <div className={styles.player}>
+        <RecordSleeve artwork={<AlbumArtwork />} revealed playing={playing} />
+        <div className={styles.playerBody}>
+          <div>
+            <h3 className={styles.playerTitle}>{HELIOS.title}</h3>
+            <p className={styles.playerArtist}>{HELIOS.artist}</p>
+            <p className={styles.playerMeta}>
+              {playing ? "Now playing" : "Paused"} · {current?.title}
+            </p>
+          </div>
+          <PlaybackControls
+            playing={playing}
+            progress={0.35}
+            onPlayingChange={setPlaying}
+            onPrevious={
+              track > 0
+                ? () => {
+                    setTrack(track - 1);
+                  }
+                : undefined
+            }
+            onNext={
+              track < LAST_TRACK
+                ? () => {
+                    setTrack(track + 1);
+                  }
+                : undefined
+            }
+          />
+          <TrackList
+            label="Tracks"
+            tracks={HELIOS.tracks}
+            currentTrack={track}
+            onTrackSelect={(index) => {
+              setTrack(index);
+              setPlaying(true);
+            }}
+          />
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+function GuideCard() {
+  const [saved, setSaved] = useState(false);
+
+  return (
+    <article className={styles.guideCard} aria-labelledby="guide-title">
+      <div className={styles.guideIntro}>
+        <p className={styles.fieldLabel}>Your local contact</p>
+        <h3 id="guide-title" className={styles.guideTitle}>
+          Meet your guide.
+        </h3>
+        <p className={styles.quiet}>
+          Have questions about exploring Monument Valley? Get in touch.
+        </p>
+      </div>
+      <div className={styles.contact}>
+        <Avatar
+          name="Wioletta Gluza"
+          ring="neutral"
+          image={<DesertPortrait />}
+        />
+        <div className={styles.contactText}>
+          <p className={styles.contactName}>Wioletta Gluza</p>
+          <p className={styles.status}>Available for enquiries</p>
+        </div>
+      </div>
+      <div className={styles.group}>
+        <Button shape="pill" icon={<ChatIcon />}>
+          Get in touch
+        </Button>
+        <IconButton
+          variant={saved ? "primary" : "secondary"}
+          shape="pill"
+          label="Save to favourites"
+          aria-pressed={saved}
+          icon={<HeartIcon />}
+          onClick={() => {
+            setSaved(!saved);
+          }}
+        />
+      </div>
+    </article>
+  );
+}
 
 function Preview() {
   return (
-    <section className={styles.board} aria-labelledby="preview-title">
-      <h2 id="preview-title" className={styles.boardTitle}>
-        At a glance
-      </h2>
-      <div className={styles.boardGrid}>
-        <div className={styles.column}>
-          <div className={styles.group}>
-            <Avatar
-              name="Wioletta Gluza"
-              ring="neutral"
-              image={<DesertPortrait />}
-            />
-            <Avatar name="Maya Torres" ring="accent" />
-            <Avatar name="Leo Park" />
-            <IconButton variant="secondary" label="Add a person" icon="+" />
-          </div>
-          <hr className={styles.rule} />
-          <div className={styles.group}>
-            <Button>Get started</Button>
-            <Button variant="secondary" icon={<ArchIcon />} iconPosition="end">
-              Learn more
-            </Button>
-            <Button variant="plain">Cancel</Button>
-            <Button disabled>Disabled</Button>
-          </div>
-          <hr className={styles.rule} />
-          <div className={styles.group}>
-            <Badge label="New" />
-            <Badge
-              label="New"
-              variant="soft"
-              tone="accent"
-              icon={<SparkleIcon />}
-            />
-            <Badge label="Featured" variant="solid" icon={<StarIcon />} />
-            <Badge label="New" variant="editorial" />
-          </div>
-          <hr className={styles.rule} />
-          <ul className={styles.swatches} aria-label="Theme colours">
-            {SWATCHES.map(([name, swatch]) => (
-              <li key={name}>
-                <span className={`${styles.swatch} ${swatch}`} />
-                {name}
-              </li>
-            ))}
-          </ul>
+    <div className={styles.board}>
+      <Section number="01" title="Essentials" fill>
+        <GuideCard />
+      </Section>
+      <Section number="02" title="Editorial" bare fill>
+        <MonumentValleyCard titleLevel={3} />
+      </Section>
+      <Section number="03" title="Data and progress">
+        <div className={styles.data}>
+          <ProgressBar
+            variant="editorial"
+            label="Uploading artwork / 001"
+            value={0.62}
+            startLabel="Album cover.svg"
+            endLabel="In progress"
+          />
+          <MilestoneProgress
+            label="Release steps"
+            milestones={["Setup", "Design", "Build", "Ship"]}
+            completed={2}
+            progress={0.4}
+          />
+          <BarChart label="Practice this week" bars={WEEK} highlighted={3} />
         </div>
-        <div className={styles.column}>
-          <MonumentValleyCard titleLevel={3} />
-        </div>
-      </div>
-    </section>
+      </Section>
+      <FeaturedPlayer />
+    </div>
   );
 }
 
@@ -88,12 +217,23 @@ function WelcomePage() {
           </a>
           .
         </p>
-        <code className={styles.install}>npm install dustyui</code>
+        <div className={styles.installRow}>
+          <code className={styles.install}>npm install dustyui</code>
+          <CopyButton
+            value="npm install dustyui"
+            label="Copy install command"
+            iconOnly
+            variant="plain"
+            size="small"
+          />
+        </div>
       </div>
       <Preview />
       <p className={styles.intro}>
-        The components are in the sidebar. Showcase, Themes shows all of them
-        together, and the toolbar switches the theme and the colour scheme.
+        The components are in the sidebar. Showcase has the larger examples: an
+        album player, a metronome, practice insights and a routine. Themes shows
+        everything together, and the toolbar switches the theme and the colour
+        scheme.
       </p>
     </main>
   );
@@ -119,12 +259,24 @@ export const Welcome: Story = {
     await expect(
       canvas.getByRole("heading", { level: 3, name: "Monument Valley" }),
     ).toBeVisible();
+    await expect(canvas.getAllByRole("heading", { level: 2 })).toHaveLength(4);
     await expect(
-      canvas.getByRole("button", { name: "Add a person" }),
+      canvas.getByRole("article", { name: "Meet your guide." }),
     ).toBeVisible();
     await expect(
-      canvas.getByRole("list", { name: "Theme colours" }).children,
-    ).toHaveLength(5);
+      canvas.getByRole("button", { name: "Save to favourites" }),
+    ).toHaveAttribute("aria-pressed", "false");
+    await expect(
+      canvas.getByRole("button", { name: "Get in touch" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("progressbar", { name: "Uploading artwork / 001" }),
+    ).toHaveAttribute("value", "0.62");
+    await expect(canvas.getByRole("button", { name: "Pause" })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: /Soft Transit/u }),
+    ).toHaveAttribute("aria-current", "true");
+    await expect(canvas.getByText("Now playing · Soft Transit")).toBeVisible();
   },
 };
 
