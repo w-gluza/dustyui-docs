@@ -218,9 +218,77 @@ function GuideCard() {
   );
 }
 
+const LINKS = [
+  ["wiola.dev", "https://wiola.dev"],
+  ["GitHub", "https://github.com/w-gluza/dustyui"],
+  ["npm", "https://www.npmjs.com/package/dustyui"],
+] as const;
+
+function Intro() {
+  return (
+    <header className={styles.intro}>
+      <div className={styles.introBar}>
+        <p className={styles.brand}>
+          <span className={styles.logo} aria-hidden="true">
+            D.
+          </span>
+          <span className={styles.fieldLabel}>
+            An experimental component library
+          </span>
+        </p>
+        <p className={styles.fieldLabel}>React / CSS Modules</p>
+      </div>
+      <div className={styles.introHead}>
+        <h1>Dusty UI.</h1>
+      </div>
+      <div className={styles.introColumns}>
+        <div className={styles.introColumn}>
+          <h2 className={styles.fieldLabel}>About the project</h2>
+          <p>
+            A small React component library where I try out ideas, experiment
+            with interactions, and play around with design. Built with CSS
+            Modules and CSS custom properties, mostly for fun and because I
+            enjoy getting the little details right.
+          </p>
+        </div>
+        <div className={styles.introColumn}>
+          <h2 className={styles.fieldLabel}>Behind the library</h2>
+          <p>
+            I’m Wioletta Gluza, an engineer based in London. I build Dusty UI
+            for fun and to explore ideas beyond my everyday work.
+          </p>
+          <ul className={styles.links}>
+            {LINKS.map(([name, href]) => (
+              <li key={name}>
+                <a href={href} target="_blank" rel="noreferrer">
+                  {name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div className={styles.introFoot}>
+        <div className={styles.installRow}>
+          <code className={styles.install}>npm install dustyui</code>
+          <CopyButton
+            value="npm install dustyui"
+            label="Copy install command"
+            iconOnly
+            variant="plain"
+            size="small"
+          />
+        </div>
+        <p className={styles.fieldLabel}>Explore the components below ↓</p>
+      </div>
+    </header>
+  );
+}
+
 function Preview() {
   return (
     <div className={styles.board}>
+      <Intro />
       <Section number="01" title="Essentials" fill>
         <GuideCard />
       </Section>
@@ -261,43 +329,6 @@ function Preview() {
 function WelcomePage() {
   return (
     <main className={styles.welcome}>
-      <div className={styles.intro}>
-        <h1>DustyUI</h1>
-        <p>
-          Dusty UI is a small React component library styled with CSS Modules
-          and themed with CSS custom properties.
-        </p>
-        <p>
-          I’m Wioletta Gluza, a frontend engineer based in London. I build Dusty
-          UI for fun. It gives me a place to try ideas and take the time to get
-          the details right.
-        </p>
-        <p>
-          Find me at{" "}
-          <a href="https://wiola.dev" target="_blank" rel="noreferrer">
-            wiola.dev
-          </a>
-          {" or on "}
-          <a
-            href="https://www.linkedin.com/in/w-gluza/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LinkedIn
-          </a>
-          .
-        </p>
-        <div className={styles.installRow}>
-          <code className={styles.install}>npm install dustyui</code>
-          <CopyButton
-            value="npm install dustyui"
-            label="Copy install command"
-            iconOnly
-            variant="plain"
-            size="small"
-          />
-        </div>
-      </div>
       <Preview />
     </main>
   );
@@ -315,18 +346,23 @@ type Story = StoryObj<typeof meta>;
 export const Welcome: Story = {
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole("heading", { level: 1, name: "DustyUI" }),
+      canvas.getByRole("heading", { level: 1, name: "Dusty UI." }),
     ).toBeVisible();
     await expect(
       canvas.getByRole("link", { name: "wiola.dev" }),
     ).toHaveAttribute("href", "https://wiola.dev");
-    await expect(
-      canvas.getByRole("link", { name: "LinkedIn" }),
-    ).toHaveAttribute("href", "https://www.linkedin.com/in/w-gluza/");
+    await expect(canvas.getByRole("link", { name: "npm" })).toHaveAttribute(
+      "href",
+      "https://www.npmjs.com/package/dustyui",
+    );
+    await expect(canvas.getByRole("link", { name: "GitHub" })).toHaveAttribute(
+      "href",
+      "https://github.com/w-gluza/dustyui",
+    );
     await expect(
       canvas.getByRole("heading", { level: 3, name: "Monument Valley" }),
     ).toBeVisible();
-    await expect(canvas.getAllByRole("heading", { level: 2 })).toHaveLength(5);
+    await expect(canvas.getAllByRole("heading", { level: 2 })).toHaveLength(7);
     await expect(
       canvas.getByRole("button", { name: "Mount Fuji" }),
     ).toHaveAttribute("aria-expanded", "false");

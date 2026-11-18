@@ -11,8 +11,88 @@
 
 .intro {
   display: grid;
+  grid-column: 1 / -1;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--dusty-border);
+  border-radius: var(--dusty-radius-md);
+  background-color: var(--dusty-surface-raised);
+}
+
+.introBar,
+.introFoot {
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  max-inline-size: 65ch;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.introBar {
+  padding-block-end: 1.5rem;
+  border-block-end: 1px solid var(--dusty-border);
+}
+
+.introFoot {
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--dusty-border);
+}
+
+.brand {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: var(--dusty-radius-sm);
+  background-color: var(--dusty-action);
+  color: var(--dusty-on-action);
+  font-weight: var(--dusty-weight-semibold);
+}
+
+.introHead {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.lead {
+  color: var(--dusty-text-muted);
+  font-size: 1.125rem;
+}
+
+.introColumns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.5rem 2rem;
+}
+
+.introColumn h2 {
+  font-weight: inherit;
+}
+
+.introColumn {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.welcome .links a {
+  color: var(--dusty-action);
+  font-weight: inherit;
 }
 
 .welcome h1 {
