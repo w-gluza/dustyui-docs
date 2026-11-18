@@ -60,6 +60,7 @@ function stubClipboard(succeeds: boolean) {
 }
 
 export const Success: Story = {
+  args: { feedbackDuration: Infinity },
   beforeEach: stubClipboard(true),
   play: async ({ args, canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Copy" }));
@@ -77,6 +78,7 @@ export const SuccessDark: Story = {
 };
 
 export const Failure: Story = {
+  args: { feedbackDuration: Infinity },
   beforeEach: stubClipboard(false),
   play: async ({ args, canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Copy" }));
@@ -92,4 +94,61 @@ export const Failure: Story = {
 export const FailureDark: Story = {
   ...Failure,
   globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const Mono: Story = {
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const SuccessMono: Story = {
+  ...Success,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const SuccessPrimary: Story = {
+  ...Success,
+  args: { ...Success.args, variant: "primary" },
+};
+
+export const FailurePrimary: Story = {
+  ...Failure,
+  args: { ...Failure.args, variant: "primary" },
+};
+
+export const IconOnlySuccess: Story = {
+  args: { iconOnly: true, variant: "plain", feedbackDuration: Infinity },
+  beforeEach: stubClipboard(true),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Copy" }));
+
+    await expect(
+      await canvas.findByRole("button", { name: "Copied" }),
+    ).toHaveAttribute("data-status", "copied");
+  },
+};
+
+export const IconOnlyFailure: Story = {
+  args: { iconOnly: true, variant: "plain", feedbackDuration: Infinity },
+  beforeEach: stubClipboard(false),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Copy" }));
+
+    await expect(
+      await canvas.findByRole("button", { name: "Copy failed" }),
+    ).toHaveAttribute("data-status", "failed");
+  },
+};
+
+export const LongLabels: Story = {
+  args: {
+    label: "Copy the installation command",
+    copiedLabel: "Installation command copied to your clipboard",
+  },
+};
+
+export const Disabled: Story = {
+  args: { disabled: true },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("button", { name: "Copy" })).toBeDisabled();
+  },
 };
