@@ -129,3 +129,52 @@ export const EditorialCustomValue: Story = {
     />
   ),
 };
+
+export const Empty: Story = {
+  args: { value: 0, showLabel: true },
+};
+
+export const Complete: Story = {
+  args: { value: 1, showLabel: true },
+};
+
+export const LongCaptions: Story = {
+  args: {
+    label: "A_very_long_unbroken_file_name_for_an_upload.svg",
+    showLabel: true,
+    value: 78,
+    max: 255,
+    valueLabel: "1:18 of 4:15",
+    startLabel: "A_very_long_unbroken_start_caption_text.svg",
+    endLabel: "In progress",
+  },
+};
+
+export const RightToLeft: Story = {
+  args: { showLabel: true, startLabel: "Album cover.svg", endLabel: "62%" },
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const IndeterminateRightToLeft: Story = {
+  ...Indeterminate,
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const EditorialIndeterminate: Story = {
+  render: () => <ProgressBar variant="editorial" label="Preparing upload" />,
+};
+
+export const EditorialMonoDark: Story = {
+  ...Editorial,
+  globals: { theme: "mono", scheme: "dark" },
+};
+
+export const DescribedByCaptions: Story = {
+  ...EditorialCustomValue,
+  tags: ["!dev"],
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("progressbar")).toHaveAccessibleDescription(
+      /of 4:15/u,
+    );
+  },
+};

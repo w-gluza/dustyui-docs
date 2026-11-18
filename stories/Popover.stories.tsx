@@ -74,3 +74,96 @@ export const AlignedToEnd: Story = {
   ...Open,
   args: { align: "end" },
 };
+
+export const Closed: Story = {};
+
+export const RightToLeft: Story = {
+  ...Open,
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const Mono: Story = {
+  ...Open,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+const openOptions: Story["play"] = async ({ canvas, userEvent }) => {
+  await userEvent.click(canvas.getByRole("button", { name: "Options" }));
+};
+
+export const NamedPanel: Story = {
+  render: () => (
+    <Popover trigger="Options" role="group" aria-label="Display options">
+      <p style={{ margin: 0, padding: "0.75rem 1rem" }}>
+        Pass a role and an accessible name to give the panel a boundary.
+      </p>
+    </Popover>
+  ),
+  play: async (context) => {
+    await openOptions(context);
+    const panel = await context.canvas.findByRole("group", {
+      name: "Display options",
+    });
+
+    await waitFor(() => expect(panel).toBeVisible());
+  },
+};
+
+export const WithoutChevron: Story = {
+  render: () => (
+    <Popover trigger="Options" chevron={false}>
+      <p style={{ margin: 0, padding: "0.75rem 1rem" }}>No chevron.</p>
+    </Popover>
+  ),
+};
+
+export const StaysOpenAfterChoice: Story = {
+  render: () => (
+    <Popover trigger="Options">
+      <RadioGroup
+        legend="Time signature"
+        legendHidden
+        options={METERS}
+        defaultValue="4/4"
+      />
+    </Popover>
+  ),
+  play: async (context) => {
+    await openOptions(context);
+    await context.userEvent.click(
+      await context.canvas.findByRole("radio", { name: "6/8" }),
+    );
+    await expect(
+      context.canvas.getByRole("button", { name: "Options" }),
+    ).toHaveAttribute("aria-expanded", "true");
+  },
+};
+
+export const LongList: Story = {
+  render: () => (
+    <Popover trigger="Options">
+      <RadioGroup
+        legend="Tempo"
+        legendHidden
+        options={Array.from({ length: 60 }, (_, index) => {
+          const tempo = String(40 + index * 4);
+
+          return { value: tempo, label: `${tempo} BPM` };
+        })}
+        defaultValue="120"
+      />
+    </Popover>
+  ),
+  play: async (context) => {
+    await openOptions(context);
+    const panel = (
+      await context.canvas.findByRole("group", {
+        name: "Tempo",
+      })
+    ).closest("[popover]") as HTMLElement;
+
+    await waitFor(() =>
+      expect(panel.scrollHeight).toBeGreaterThan(panel.clientHeight),
+    );
+  },
+};

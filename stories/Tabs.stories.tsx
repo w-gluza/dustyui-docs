@@ -154,3 +154,53 @@ export const DisabledInteractions: Story = {
     await expect(canvas.getByRole("tab", { name: "Settings" })).toHaveFocus();
   },
 };
+
+export const Mono: Story = {
+  ...AllVariants,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const RightToLeft: Story = {
+  ...AllVariants,
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const DisabledTabsAllVariants: Story = {
+  ...AllVariants,
+  args: { disabledTab: "activity" },
+};
+
+export const NarrowUnderline: Story = {
+  ...ResponsiveLayout,
+  args: { ...ResponsiveLayout.args, variant: "underline" },
+};
+
+export const NarrowPill: Story = {
+  ...ResponsiveLayout,
+  args: { ...ResponsiveLayout.args, variant: "pill" },
+};
+
+export const SelectedOutOfView: Story = {
+  ...ResponsiveLayout,
+  args: { ...ResponsiveLayout.args, value: "settings" },
+  play: async ({ canvas }) => {
+    const tab = canvas.getByRole("tab", { name: "Notifications" });
+    const list = canvas.getByRole("tablist").parentElement as HTMLElement;
+
+    await expect(tab.getBoundingClientRect().right).toBeLessThanOrEqual(
+      list.getBoundingClientRect().right + 1,
+    );
+  },
+};
+
+export const ModifierKeys: Story = {
+  tags: ["!dev"],
+  play: async ({ canvas, userEvent }) => {
+    const overview = canvas.getByRole("tab", { name: "Overview" });
+
+    await userEvent.click(overview);
+    await userEvent.keyboard("{Alt>}{ArrowRight}{/Alt}");
+
+    await expect(overview).toHaveAttribute("aria-selected", "true");
+  },
+};
