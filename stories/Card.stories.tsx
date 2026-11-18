@@ -137,3 +137,84 @@ export const TextOnly: Story = {
     );
   },
 };
+
+export const AsSection: Story = {
+  args: { as: "section", "aria-label": "Featured story" },
+  render: (args) => <MonumentValleyCard {...args} />,
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole("region", { name: "Featured story" }),
+    ).toBeVisible();
+  },
+};
+
+export const RightToLeft: Story = {
+  render: (args) => (
+    <div dir="rtl">
+      <MonumentValleyCard {...args} />
+    </div>
+  ),
+};
+
+export const PosterRightToLeft: Story = {
+  ...Poster,
+  decorators: [
+    (Story) => (
+      <div dir="rtl" className={styles.narrow}>
+        {Story()}
+      </div>
+    ),
+  ],
+};
+
+export const PosterMono: Story = {
+  ...Poster,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const PosterWithMediaLabel: Story = {
+  args: { variant: "poster" },
+  decorators: [(Story) => <div className={styles.narrow}>{Story()}</div>],
+  render: (args) => (
+    <Card {...args}>
+      <CardMedia label="Featured">
+        <ArchPoster />
+      </CardMedia>
+      <CardContent>
+        <CardTitle level={2}>Arches National Park</CardTitle>
+        <CardDescription>
+          More than 2,000 natural stone arches in the red rock country of
+          eastern Utah.
+        </CardDescription>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const LongContentInANarrowColumn: Story = {
+  decorators: [(Story) => <div className={styles.column}>{Story()}</div>],
+  render: (args) => (
+    <Card {...args}>
+      <CardMedia label="Featured destination of the season">
+        <DesertLandscape />
+      </CardMedia>
+      <CardContent>
+        <CardTitle level={2}>
+          Monument Valley Navajo Tribal Park at first light
+        </CardTitle>
+        <CardDescription>
+          {DESCRIPTION} Shaped by millions of years of erosion, the valley is
+          known for its rock formations and its changing colours through the
+          day.
+        </CardDescription>
+        <CardFooter end="16 min read, updated yesterday">
+          <Author />
+        </CardFooter>
+      </CardContent>
+    </Card>
+  ),
+  play: async ({ canvas }) => {
+    const card = canvas.getByRole("article");
+    await expect(card.scrollWidth).toBeLessThanOrEqual(card.clientWidth);
+  },
+};

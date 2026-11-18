@@ -12,3 +12,8 @@
   max-inline-size: 100%;
   margin-inline: auto;
 }
+
+.column {
+  inline-size: 14rem;
+  margin-inline: auto;
+}
