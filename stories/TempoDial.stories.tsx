@@ -1,5 +1,6 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, fireEvent, fn } from "storybook/test";
+import { expect, fireEvent, fn, userEvent } from "storybook/test";
 import { TempoDial, type TempoDialProps } from "dustyui";
 import styles from "./Metronome.module.css";
 
@@ -54,5 +55,69 @@ export const Volume: Story = {
     max: 100,
     step: 5,
     defaultValue: 65,
+  },
+};
+
+function ControlledDial() {
+  const [tempo, setTempo] = useState(96);
+
+  return (
+    <TempoDial
+      label="Tempo"
+      unit="BPM"
+      min={40}
+      max={240}
+      value={tempo}
+      onValueChange={setTempo}
+    />
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledDial />,
+  play: async ({ canvas }) => {
+    const slider = canvas.getByRole("slider", { name: "Tempo" });
+
+    await fireEvent.change(slider, { target: { value: "98" } });
+
+    await expect(slider).toHaveValue("98");
+  },
+};
+
+export const FractionalStep: Story = {
+  args: {
+    label: "Gain",
+    unit: "dB",
+    min: 0,
+    max: 1,
+    step: 0.1,
+    defaultValue: 0.3,
+  },
+};
+
+export const LongValue: Story = {
+  args: {
+    label: "Frequency",
+    unit: "Hz",
+    min: 20,
+    max: 20000,
+    step: 10,
+    defaultValue: 12500,
+  },
+};
+
+export const Small: Story = {
+  decorators: [(Story) => <div style={{ inlineSize: "8rem" }}>{Story()}</div>],
+};
+
+export const RightToLeft: Story = {
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const KeyboardFocus: Story = {
+  play: async ({ canvas }) => {
+    await userEvent.tab();
+
+    await expect(canvas.getByRole("slider", { name: "Tempo" })).toHaveFocus();
   },
 };
