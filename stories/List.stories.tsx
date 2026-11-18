@@ -23,7 +23,9 @@ const RUDIMENTS = [
 const meta = {
   title: "Components/List",
   component: List,
+  subcomponents: { ListItem },
   parameters: { layout: "centered" },
+  tags: ["autodocs"],
   argTypes: {
     variant: {
       control: "inline-radio",
@@ -238,7 +240,7 @@ export const WithTrailingActions: Story = {
           key={rudiment.name}
           title={rudiment.name}
           description={`${String(rudiment.minutes)} min · ${String(rudiment.bpm)} BPM`}
-          trailing={
+          actions={
             <IconButton
               variant="plain"
               size="small"
@@ -289,4 +291,113 @@ export const Interactions: Story = {
       canvas.getByRole("button", { name: /^Double Stroke Roll/u }),
     ).not.toHaveAttribute("aria-current");
   },
+};
+
+export const Mono: Story = {
+  ...Default,
+  args: { variant: "contained" },
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const SelectedLink: Story = {
+  render: (args) => (
+    <List {...args}>
+      {RUDIMENTS.map((rudiment, index) => (
+        <ListItem
+          key={rudiment.name}
+          href={`#${rudiment.name.toLowerCase().replaceAll(" ", "-")}`}
+          title={rudiment.name}
+          selected={index === 1 ? "page" : false}
+        />
+      ))}
+    </List>
+  ),
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole("link", { name: "Double Stroke Roll" }),
+    ).toHaveAttribute("aria-current", "page");
+  },
+};
+
+export const SelectedPlain: Story = {
+  ...SelectedLink,
+  args: { variant: "plain" },
+};
+
+export const SelectedDark: Story = {
+  ...InteractiveSelectable,
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const ClickableRowsWithTrailingActions: Story = {
+  args: { variant: "contained" },
+  render: (args) => (
+    <List {...args}>
+      {RUDIMENTS.map((rudiment) => (
+        <ListItem
+          key={rudiment.name}
+          href={`#${rudiment.name.toLowerCase().replaceAll(" ", "-")}`}
+          title={rudiment.name}
+          description={`${String(rudiment.minutes)} min`}
+          actions={
+            <IconButton
+              variant="plain"
+              size="small"
+              shape="pill"
+              label={`Play ${rudiment.name}`}
+              icon={<PlayIcon />}
+            />
+          }
+        />
+      ))}
+    </List>
+  ),
+  play: async ({ canvas, canvasElement }) => {
+    await expect(canvas.getAllByRole("link")).toHaveLength(3);
+    await expect(canvas.getAllByRole("button")).toHaveLength(3);
+    await expect(canvasElement.querySelector("a button")).toBeNull();
+  },
+};
+
+export const LongContent: Story = {
+  args: { variant: "contained" },
+  render: (args) => (
+    <List {...args}>
+      <ListItem
+        title="Single Stroke Roll played hand to hand at an even volume"
+        description="Start slowly, keep both sticks at the same height and only speed up once every note sounds the same."
+        trailing="70 BPM for three minutes, then 80"
+      />
+      <ListItem
+        href="#double-stroke-roll"
+        title="Double Stroke Roll"
+        trailing="Sixty beats per minute for the first three minutes"
+      />
+    </List>
+  ),
+};
+
+export const RightToLeft: Story = {
+  ...ClickableRowsWithTrailingActions,
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const NumberedWithLeading: Story = {
+  args: { numbered: true },
+  render: (args) => (
+    <List {...args}>
+      {RUDIMENTS.map((rudiment) => (
+        <ListItem
+          key={rudiment.name}
+          leading={
+            <span className={styles.icon}>
+              <ClockIcon />
+            </span>
+          }
+          title={rudiment.name}
+          trailing={`${String(rudiment.minutes)} min`}
+        />
+      ))}
+    </List>
+  ),
 };
