@@ -17,7 +17,7 @@ function Editable({
       beats={beats}
       onBeatChange={(index, kind) => {
         setBeats(beats.map((beat, i) => (i === index ? kind : beat)));
-        onBeatChange(index, kind);
+        return onBeatChange(index, kind);
       }}
     />
   );

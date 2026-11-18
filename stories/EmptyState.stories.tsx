@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn } from "storybook/test";
-import { Button, EmptyState } from "dustyui";
+import { Button, Card, EmptyState } from "dustyui";
+import styles from "./EmptyState.module.css";
 import { DesertPortrait } from "./DesertArtwork";
 
 const meta = {
@@ -59,4 +60,70 @@ export const TextOnly: Story = {
 
 export const WithAction: Story = {
   args: { actions: <Button>Plan a trip</Button> },
+};
+
+export const Mono: Story = {
+  ...Illustrated,
+  globals: { theme: "mono", scheme: "light" },
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("button")).toHaveLength(2);
+  },
+};
+
+export const LongCopy: Story = {
+  args: {
+    title: "You have not planned any trips to a national park this year",
+    description:
+      "Pick a park and a date, and your first trip will show up here. You can add as many stops as you like, share the plan with the people travelling with you, and change it right up to the morning you leave.",
+    actions: <Button>Plan a trip</Button>,
+  },
+};
+
+export const RichDescription: Story = {
+  args: {
+    description: (
+      <>
+        <p>Your first trip will show up here.</p>
+        <p>You need a park and a date to start.</p>
+      </>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelector("p p")).toBeNull();
+  },
+};
+
+export const NarrowContainer: Story = {
+  ...Illustrated,
+  decorators: [(Story) => <div className={styles.narrow}>{Story()}</div>],
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("button")).toHaveLength(2);
+  },
+};
+
+export const InsideACard: Story = {
+  args: { actions: <Button variant="secondary">Plan a trip</Button> },
+  decorators: [
+    (Story) => (
+      <Card as="div" className={styles.card}>
+        {Story()}
+      </Card>
+    ),
+  ],
+};
+
+export const NoSearchResults: Story = {
+  args: {
+    title: "No parks match \u201Cglacier bay\u201D",
+    description: "Check the spelling, or search by state.",
+    actions: <Button variant="secondary">Clear search</Button>,
+  },
+};
+
+export const LoadingFailed: Story = {
+  args: {
+    title: "Your trips did not load",
+    description: "The connection dropped. Your trips are safe.",
+    actions: <Button>Try again</Button>,
+  },
 };

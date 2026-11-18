@@ -1,0 +1,8 @@
+.narrow {
+  inline-size: 14rem;
+}
+
+.card {
+  inline-size: 24rem;
+  max-inline-size: 100%;
+}
