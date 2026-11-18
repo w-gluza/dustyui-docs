@@ -30,6 +30,7 @@ export const Default: Story = {
 
     await expect(items[1]).toHaveTextContent("Design, completed");
     await expect(items[2]).toHaveAttribute("aria-current", "step");
+    await expect(items[2]).toHaveTextContent("Build, 40% done");
   },
 };
 
@@ -58,10 +59,12 @@ export const BetweenSteps: Story = {
 };
 
 export const WithProgressLabel: Story = {
-  args: { progressLabel: "40% done" },
+  args: {
+    progressLabel: (percent: number) => `${String(percent)}% of the way there`,
+  },
   play: async ({ canvas }) => {
     await expect(canvas.getAllByRole("listitem")[2]).toHaveTextContent(
-      "Build, 40% done",
+      "Build, 40% of the way there",
     );
   },
 };

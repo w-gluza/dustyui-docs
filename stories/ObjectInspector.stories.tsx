@@ -43,6 +43,14 @@ Add \`searchable\` for a search field above the tree. It looks in keys and in va
 
 Add \`showDetails\` for a panel below the tree with the path, type and whole value of the selected row, and buttons that copy the path or the value. Copying never runs a getter.
 
+**Wording**
+
+The text of the search field, the details panel, the copy buttons and the announcements is English by default. Pass \`labels\` with any of them to translate or reword; the rest keep their defaults. Counted text, such as the search status, is a function.
+
+**A stable value**
+
+The tree is described again whenever \`value\` is a new object. An object written inline, such as \`value={{ user }}\`, is new on every render, which closes lazily read rows and repeats the search. Keep the value in state or wrap it in \`useMemo\`.
+
 **Large values**
 
 A list of more than 100 items is grouped into ranges, such as \`Items 0 to 99\`, so opening it never creates a row for every item. \`getNodeTrail\` returns the rows to open on the way to one value, ranges included.
@@ -57,7 +65,7 @@ A tree with more than 200 visible rows renders only the rows near the view. Give
 - Search stops after 500,000 values and says so. A list longer than that is not searched.
 - Copy value writes at most 5,000 values. A longer list is copied as its one-line summary.
 - In a large tree the browser's own find does not see rows that are scrolled out of view.
-- The text of the search field, the details and the buttons is English only.
+- Range names such as \`Items 0 to 99\` and the one-line previews of values are English only.
 `;
 
 const meta = {
@@ -99,6 +107,12 @@ const meta = {
         type: { summary: "boolean" },
         defaultValue: { summary: "false" },
       },
+    },
+    labels: {
+      description:
+        "Replaces any of the interface text. Anything left out stays English.",
+      control: false,
+      table: { type: { summary: "Partial<ObjectInspectorLabels>" } },
     },
     showDetails: {
       description:
@@ -488,4 +502,114 @@ export const LargeList: Story = {
     ).toHaveFocus();
     await expect(canvas.getAllByRole("treeitem").length).toBeLessThan(100);
   },
+};
+
+export const EveryKindDark: Story = {
+  ...EveryKind,
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const EveryKindMono: Story = {
+  ...EveryKind,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const SearchDark: Story = {
+  ...Search,
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const SearchMono: Story = {
+  ...Search,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const SearchWithNoMatches: Story = {
+  render: () => (
+    <Demo
+      title="Search with no matches"
+      testing="The status says so and the previous and next buttons are unavailable."
+    >
+      <ObjectInspector
+        label="National parks of the world"
+        value={mediumParks}
+        searchable
+      />
+    </Demo>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByRole("searchbox"), "zeppelin");
+
+    await expect(await canvas.findByText("No matches")).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Next match" }),
+    ).toHaveAttribute("aria-disabled", "true");
+  },
+};
+
+export const Translated: Story = {
+  render: () => (
+    <Demo
+      title="Translated"
+      testing="Every piece of interface text comes from the labels prop, here in Polish."
+    >
+      <ObjectInspector
+        label="Parki narodowe"
+        value={mediumParks}
+        searchable
+        showDetails
+        labels={{
+          search: "Szukaj",
+          searchRegion: (label) => `Szukaj w: ${label}`,
+          previousMatch: "Poprzedni wynik",
+          nextMatch: "Następny wynik",
+          searchStatus: ({ count, current }) =>
+            count === 0
+              ? "Brak wyników"
+              : current >= 0
+                ? `${String(current + 1)} z ${String(count)}`
+                : `Wyniki: ${String(count)}`,
+          matchAnnouncement: (status, path) => `Wynik ${status}: ${path}`,
+          noProperties: "Brak właściwości",
+          detailsRegion: (label) => `Wybrana wartość w: ${label}`,
+          path: "Ścieżka",
+          type: "Typ",
+          value: "Wartość",
+          typeName: (kind, name) => (kind === "object" ? "Obiekt" : name),
+          copyPath: "Kopiuj ścieżkę",
+          copyValue: "Kopiuj wartość",
+          pathCopied: "Skopiowano ścieżkę",
+          valueCopied: "Skopiowano wartość",
+          copyFailed:
+            "Nie udało się skopiować. Zaznacz tekst i skopiuj ręcznie.",
+        }}
+      />
+    </Demo>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByLabelText("Szukaj"), "zeppelin");
+
+    await expect(await canvas.findByText("Brak wyników")).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Kopiuj ścieżkę" }),
+    ).toBeVisible();
+  },
+};
+
+export const RightToLeft: Story = {
+  render: () => (
+    <Demo
+      title="Right to left"
+      testing="The search row, the tree indentation and the details panel mirror."
+    >
+      <div dir="rtl">
+        <ObjectInspector
+          label="National parks of the world"
+          value={mediumParks}
+          searchable
+          showDetails
+        />
+      </div>
+    </Demo>
+  ),
 };
