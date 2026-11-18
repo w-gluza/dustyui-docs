@@ -125,3 +125,32 @@ export const Decorative: Story = {
     await expect(canvas.queryByRole("img")).toBeNull();
   },
 };
+
+export const Matrix: Story = {
+  render: (args) => (
+    <div className={styles.avatars}>
+      <Avatar {...args} size="small" />
+      <Avatar {...args} size="medium" ring="neutral" />
+      <Avatar {...args} size="large" ring="accent" />
+      <Avatar {...args} name="Madonna" size="medium" />
+      <Avatar {...args} name="Team" fallback="+100" size="small" />
+      <Avatar {...args} size="small" ring="accent" image={<DesertPortrait />} />
+      <Avatar {...args} size="large" image={<DesertPortrait />} />
+    </div>
+  ),
+};
+
+export const MatrixDark: Story = {
+  ...Matrix,
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const MatrixMono: Story = {
+  ...Matrix,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const MatrixMonoDark: Story = {
+  ...Matrix,
+  globals: { theme: "mono", scheme: "dark" },
+};
