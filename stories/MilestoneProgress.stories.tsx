@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 import { MilestoneProgress } from "dustyui";
-import styles from "./ProgressBar.module.css";
+import styles from "./MilestoneProgress.module.css";
 
 const meta = {
   title: "Components/MilestoneProgress",
@@ -47,4 +47,56 @@ export const NotStarted: Story = {
 
 export const Finished: Story = {
   args: { completed: 4 },
+};
+
+export const MonoDark: Story = {
+  globals: { theme: "mono", scheme: "dark" },
+};
+
+export const BetweenSteps: Story = {
+  args: { completed: 2, progress: 0 },
+};
+
+export const WithProgressLabel: Story = {
+  args: { progressLabel: "40% done" },
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("listitem")[2]).toHaveTextContent(
+      "Build, 40% done",
+    );
+  },
+};
+
+const DELIVERY = [
+  "Requirements",
+  "Design",
+  "Implementation",
+  "Review",
+  "Testing",
+  "Release",
+];
+
+export const SixMilestones: Story = {
+  args: { milestones: DELIVERY, completed: 3 },
+  argTypes: { completed: { control: { type: "number", min: 0, max: 6 } } },
+  decorators: [(Story) => <div className={styles.wide}>{Story()}</div>],
+};
+
+export const LongLabels: Story = {
+  args: {
+    milestones: [
+      "Set up your account",
+      "Design the first screen",
+      "Build and test",
+      "Ship to everyone",
+    ],
+  },
+};
+
+export const NarrowContainer: Story = {
+  args: { milestones: DELIVERY, completed: 3 },
+  decorators: [(Story) => <div className={styles.narrow}>{Story()}</div>],
+};
+
+export const RightToLeft: Story = {
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
 };

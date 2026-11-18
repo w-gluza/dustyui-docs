@@ -1,0 +1,11 @@
+.frame {
+  inline-size: min(22rem, calc(100vw - 2rem));
+}
+
+.wide {
+  inline-size: min(36rem, calc(100vw - 2rem));
+}
+
+.narrow {
+  inline-size: 16rem;
+}
