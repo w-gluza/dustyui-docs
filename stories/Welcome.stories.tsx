@@ -264,14 +264,26 @@ function WelcomePage() {
       <div className={styles.intro}>
         <h1>DustyUI</h1>
         <p>
-          A small React component library, styled with CSS Modules and themed
-          through CSS custom properties.
+          Dusty UI is a small React component library styled with CSS Modules
+          and themed with CSS custom properties.
         </p>
         <p>
-          I build it for fun, as a place to try ideas and take the time to do
-          them properly. I am Wiola, and there is more about me at{" "}
-          <a href="https://www.wiola.dev" target="_blank" rel="noreferrer">
+          I’m Wioletta Gluza, a frontend engineer based in London. I build Dusty
+          UI for fun. It gives me a place to try ideas and take the time to get
+          the details right.
+        </p>
+        <p>
+          Find me at{" "}
+          <a href="https://wiola.dev" target="_blank" rel="noreferrer">
             wiola.dev
+          </a>
+          {" or on "}
+          <a
+            href="https://www.linkedin.com/in/w-gluza/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            LinkedIn
           </a>
           .
         </p>
@@ -287,11 +299,6 @@ function WelcomePage() {
         </div>
       </div>
       <Preview />
-      <p className={styles.intro}>
-        The components are in the sidebar. Showcase has the larger examples: an
-        album player, a metronome, practice insights and a routine. The toolbar
-        switches the theme and the colour scheme.
-      </p>
     </main>
   );
 }
@@ -312,7 +319,10 @@ export const Welcome: Story = {
     ).toBeVisible();
     await expect(
       canvas.getByRole("link", { name: "wiola.dev" }),
-    ).toHaveAttribute("href", "https://www.wiola.dev");
+    ).toHaveAttribute("href", "https://wiola.dev");
+    await expect(
+      canvas.getByRole("link", { name: "LinkedIn" }),
+    ).toHaveAttribute("href", "https://www.linkedin.com/in/w-gluza/");
     await expect(
       canvas.getByRole("heading", { level: 3, name: "Monument Valley" }),
     ).toBeVisible();
