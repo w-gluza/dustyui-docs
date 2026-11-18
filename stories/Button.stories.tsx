@@ -3,6 +3,7 @@ import { expect, fn, waitFor } from "storybook/test";
 import { Button } from "dustyui";
 import { ArchIcon } from "./icons";
 import styles from "./Demo.module.css";
+import matrix from "./Button.module.css";
 
 const meta = {
   title: "Components/Button",
@@ -130,6 +131,7 @@ export const Loading: Story = {
         document.querySelector("[data-dusty-announcer]"),
       ).toHaveTextContent("Loading"),
     );
+    button.blur();
   },
 };
 
@@ -140,5 +142,120 @@ export const FocusableWhenUnavailable: Story = {
     await userEvent.click(button);
     await expect(args.onClick).not.toHaveBeenCalled();
     await expect(button).toHaveFocus();
+  },
+};
+
+const VARIANTS = ["primary", "secondary", "plain"] as const;
+
+function StateMatrix() {
+  return (
+    <table className={matrix.matrix}>
+      <thead>
+        <tr>
+          <th scope="col">variant</th>
+          <th scope="col">default</th>
+          <th scope="col">icon</th>
+          <th scope="col">disabled</th>
+          <th scope="col">loading</th>
+        </tr>
+      </thead>
+      <tbody>
+        {VARIANTS.map((variant) => (
+          <tr key={variant}>
+            <th scope="row">{variant}</th>
+            <td>
+              <Button variant={variant}>Save</Button>
+            </td>
+            <td>
+              <Button variant={variant} icon={<ArchIcon />}>
+                Save
+              </Button>
+            </td>
+            <td>
+              <Button variant={variant} disabled>
+                Save
+              </Button>
+            </td>
+            <td>
+              <Button variant={variant} loading>
+                Save
+              </Button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function states(theme: string, scheme: string): Story {
+  return {
+    globals: { theme, scheme },
+    render: () => <StateMatrix />,
+    play: async ({ canvas }) => {
+      await expect(canvas.getAllByRole("button")).toHaveLength(
+        VARIANTS.length * 4,
+      );
+    },
+  };
+}
+
+export const States: Story = states("dusty", "light");
+export const StatesDark: Story = states("dusty", "dark");
+export const StatesMono: Story = states("mono", "light");
+export const StatesMonoDark: Story = states("mono", "dark");
+
+export const Sizes: Story = {
+  render: (args) => (
+    <div className={styles.avatars}>
+      <Button {...args} size="small">
+        Small
+      </Button>
+      <Button {...args} size="medium">
+        Medium
+      </Button>
+      <Button {...args} size="large">
+        Large
+      </Button>
+    </div>
+  ),
+};
+
+export const IconAtStart: Story = {
+  args: { icon: <ArchIcon />, iconPosition: "start", children: "Explore" },
+};
+
+export const PillWithIcon: Story = {
+  args: {
+    shape: "pill",
+    variant: "secondary",
+    icon: <ArchIcon />,
+    iconPosition: "end",
+    children: "Explore",
+  },
+};
+
+export const CustomLoadingLabel: Story = {
+  args: { loading: true, loadingLabel: "Saving your changes" },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole("button", { name: "Save" }),
+    ).toHaveAccessibleDescription("Saving your changes");
+  },
+};
+
+export const LongLabel: Story = {
+  render: (args) => (
+    <div className={matrix.narrow}>
+      <Button {...args} icon={<ArchIcon />}>
+        Save and continue to the next step
+      </Button>
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button");
+    await expect(button.getBoundingClientRect().width).toBeLessThanOrEqual(
+      button.parentElement?.getBoundingClientRect().width ?? 0,
+    );
   },
 };

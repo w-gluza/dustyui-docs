@@ -1,0 +1,15 @@
+.matrix {
+  border-spacing: 1.5rem 1rem;
+  color: var(--dusty-text-muted);
+  font-size: 0.8125rem;
+  text-align: start;
+}
+
+.matrix th {
+  font-weight: 400;
+  text-align: start;
+}
+
+.narrow {
+  inline-size: 10rem;
+}
