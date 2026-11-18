@@ -8,3 +8,7 @@ body {
   background-color: var(--dusty-surface);
   color: var(--dusty-text);
 }
+
+.docs-appearance {
+  display: contents;
+}

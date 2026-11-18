@@ -1,6 +1,35 @@
+import { createElement, type ReactNode } from "react";
 import type { Preview } from "@storybook/nextjs-vite";
 import "dustyui/themes/mono.css";
 import "./preview.css";
+
+interface Appearance {
+  theme: string;
+  scheme: string;
+}
+
+function DocsAppearance({
+  theme,
+  scheme,
+  children,
+}: Appearance & { children?: ReactNode }) {
+  return createElement(
+    "div",
+    {
+      className: "docs-appearance",
+      "data-theme": theme,
+      "data-color-scheme": scheme,
+      ref: (node: HTMLDivElement | null) => {
+        const frame = node?.closest<HTMLElement>(".docs-story");
+        if (frame) {
+          frame.dataset.theme = theme;
+          frame.dataset.colorScheme = scheme;
+        }
+      },
+    },
+    children,
+  );
+}
 
 const preview: Preview = {
   globalTypes: {
@@ -29,12 +58,16 @@ const preview: Preview = {
   },
   decorators: [
     (Story, context) => {
+      const { theme, scheme } = context.globals as Appearance;
+      if (context.viewMode === "docs") {
+        return createElement(DocsAppearance, { theme, scheme }, Story());
+      }
       const root = document.documentElement;
-      root.dataset.theme = context.globals.theme;
-      if (context.globals.scheme === "system") {
+      root.dataset.theme = theme;
+      if (scheme === "system") {
         delete root.dataset.colorScheme;
       } else {
-        root.dataset.colorScheme = context.globals.scheme;
+        root.dataset.colorScheme = scheme;
       }
       return Story();
     },

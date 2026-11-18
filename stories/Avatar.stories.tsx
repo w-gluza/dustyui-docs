@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect } from "storybook/test";
+import { expect, waitFor } from "storybook/test";
 import { Avatar } from "dustyui";
 import { DesertPortrait } from "./DesertArtwork";
 import styles from "./Demo.module.css";
@@ -116,6 +116,24 @@ export const WithImage: Story = {
     const avatar = canvas.getByRole("img", { name: "Wioletta Gluza" });
     await expect(avatar.querySelector("img")).toHaveAttribute("alt", "");
     await expect(avatar).toHaveTextContent("WG");
+  },
+};
+
+export const BrokenImage: Story = {
+  args: { image: <img alt="" src="/missing-portrait.png" /> },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "An image that fails to load is hidden, so the initials show instead of a broken-image icon.",
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const image = canvasElement.querySelector("img");
+    await waitFor(() =>
+      expect(image && getComputedStyle(image).visibility).toBe("hidden"),
+    );
   },
 };
 
