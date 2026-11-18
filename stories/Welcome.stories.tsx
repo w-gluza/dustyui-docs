@@ -289,9 +289,8 @@ function WelcomePage() {
       <Preview />
       <p className={styles.intro}>
         The components are in the sidebar. Showcase has the larger examples: an
-        album player, a metronome, practice insights and a routine. Themes shows
-        everything together, and the toolbar switches the theme and the colour
-        scheme.
+        album player, a metronome, practice insights and a routine. The toolbar
+        switches the theme and the colour scheme.
       </p>
     </main>
   );
