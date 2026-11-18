@@ -77,3 +77,88 @@ export const GridLegend: Story = {
     ],
   },
 };
+
+export const MonoDark: Story = {
+  ...CustomWhole,
+  globals: { theme: "mono", scheme: "dark" },
+};
+
+export const SmallInline: Story = {
+  args: { size: "small" },
+};
+
+export const SingleSegment: Story = {
+  args: { segments: [{ label: "Design", value: 0.6 }] },
+};
+
+export const Empty: Story = {
+  args: {
+    segments: [
+      { label: "Design", value: 0 },
+      { label: "Build", value: 0 },
+    ],
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("0% Design")).toBeVisible();
+  },
+};
+
+export const EqualThirds: Story = {
+  args: {
+    max: 3,
+    segments: [
+      { label: "Design", value: 1 },
+      { label: "Build", value: 1 },
+      { label: "Review", value: 1 },
+    ],
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("34% Design")).toBeVisible();
+    await expect(canvas.getByText("33% Review")).toBeVisible();
+  },
+};
+
+export const TinyShare: Story = {
+  args: {
+    segments: [
+      { label: "Design", value: 0.6 },
+      { label: "Review", value: 0.004 },
+    ],
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("<1% Review")).toBeVisible();
+  },
+};
+
+export const LongLabels: Story = {
+  args: {
+    legend: "grid",
+    segments: [
+      { label: "Design explorations and prototypes", value: 0.38 },
+      { label: "Build", value: 0.26 },
+      { label: "Review with the accessibility team", value: 0.21 },
+    ],
+  },
+};
+
+export const MoreThanFive: Story = {
+  args: {
+    label: "Storage",
+    max: 256,
+    segments: [
+      { label: "Photos", value: 96 },
+      { label: "Music", value: 48 },
+      { label: "Documents", value: 24 },
+      { label: "Apps", value: 32 },
+      { label: "Mail", value: 12 },
+      { label: "Other", value: 16 },
+    ],
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("listitem")).toHaveLength(6);
+  },
+};
+
+export const RightToLeft: Story = {
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
