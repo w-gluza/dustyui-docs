@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn } from "storybook/test";
 import { IconButton } from "dustyui";
-import { PlayIcon } from "./icons";
+import { HeartIcon, PlayIcon } from "./icons";
+import styles from "./Button.module.css";
 
 const closeIcon = (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -45,7 +46,7 @@ export const Plain: Story = {
   args: { variant: "plain" },
 };
 
-export const Round: Story = {
+export const Pill: Story = {
   args: { shape: "pill" },
   play: async ({ canvas }) => {
     const button = canvas.getByRole("button", { name: "Close" });
@@ -58,7 +59,7 @@ export const Round: Story = {
   },
 };
 
-export const RoundPlayButton: Story = {
+export const PillPlayButton: Story = {
   args: { shape: "pill", size: "large", label: "Play", icon: <PlayIcon /> },
 };
 
@@ -79,3 +80,117 @@ export const Loading: Story = {
     );
   },
 };
+
+export const Disabled: Story = {
+  args: { disabled: true },
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole("button", { name: "Close" });
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const Toggle: Story = {
+  args: {
+    variant: "plain",
+    shape: "pill",
+    label: "Favourite",
+    icon: <HeartIcon />,
+    "aria-pressed": true,
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole("button", { name: "Favourite", pressed: true }),
+    ).toBeVisible();
+  },
+};
+
+const VARIANTS = ["primary", "secondary", "plain"] as const;
+const SIZES = ["small", "medium", "large"] as const;
+
+function Matrix() {
+  return (
+    <table className={styles.matrix}>
+      <thead>
+        <tr>
+          <th scope="col">variant</th>
+          {SIZES.map((size) => (
+            <th key={size} scope="col">
+              {size}
+            </th>
+          ))}
+          <th scope="col">pill</th>
+          <th scope="col">pressed</th>
+          <th scope="col">disabled</th>
+          <th scope="col">loading</th>
+        </tr>
+      </thead>
+      <tbody>
+        {VARIANTS.map((variant) => (
+          <tr key={variant}>
+            <th scope="row">{variant}</th>
+            {SIZES.map((size) => (
+              <td key={size}>
+                <IconButton
+                  label={`Close, ${size}`}
+                  icon={closeIcon}
+                  variant={variant}
+                  size={size}
+                />
+              </td>
+            ))}
+            <td>
+              <IconButton
+                label="Close, pill"
+                icon={closeIcon}
+                variant={variant}
+                shape="pill"
+              />
+            </td>
+            <td>
+              <IconButton
+                label="Close, pressed"
+                icon={closeIcon}
+                variant={variant}
+                aria-pressed
+              />
+            </td>
+            <td>
+              <IconButton
+                label="Close, disabled"
+                icon={closeIcon}
+                variant={variant}
+                disabled
+              />
+            </td>
+            <td>
+              <IconButton
+                label="Close, loading"
+                icon={closeIcon}
+                variant={variant}
+                loading
+              />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function matrix(theme: string, scheme: string): Story {
+  return {
+    globals: { theme, scheme },
+    render: () => <Matrix />,
+    play: async ({ canvas }) => {
+      await expect(canvas.getAllByRole("button")).toHaveLength(
+        VARIANTS.length * (SIZES.length + 4),
+      );
+    },
+  };
+}
+
+export const Variants: Story = matrix("dusty", "light");
+export const VariantsDark: Story = matrix("dusty", "dark");
+export const VariantsMono: Story = matrix("mono", "light");
+export const VariantsMonoDark: Story = matrix("mono", "dark");
