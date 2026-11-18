@@ -1,0 +1,9 @@
+.raised {
+  --dusty-avatar-group-gap: var(--dusty-surface-raised);
+
+  padding: 1.5rem;
+}
+
+.narrow {
+  inline-size: 8rem;
+}
