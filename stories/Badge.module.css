@@ -8,3 +8,20 @@
   font-weight: var(--dusty-weight-semibold);
   text-align: start;
 }
+
+.narrow {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  inline-size: 7rem;
+}
+
+.raised {
+  padding: 1.5rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}

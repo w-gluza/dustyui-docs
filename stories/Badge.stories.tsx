@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
-import { Badge } from "dustyui";
+import { Badge, Card } from "dustyui";
 import { DotIcon, SparkleIcon, StarIcon } from "./icons";
 import styles from "./Badge.module.css";
 
@@ -130,4 +130,77 @@ export const IconEnd: Story = {
     await expect(icon).toHaveAttribute("aria-hidden", "true");
     await expect(icon?.querySelector("svg")).not.toBeNull();
   },
+};
+
+function Wrapping() {
+  return (
+    <div className={styles.narrow}>
+      {VARIANTS.map((variant) =>
+        variant === "editorial" ? (
+          <Badge
+            key={variant}
+            label="Awaiting editorial review"
+            variant={variant}
+          />
+        ) : (
+          <Badge
+            key={variant}
+            label="Awaiting editorial review"
+            icon={<SparkleIcon />}
+            variant={variant}
+          />
+        ),
+      )}
+    </div>
+  );
+}
+
+export const LongLabel: Story = {
+  render: () => <Wrapping />,
+  play: async ({ canvas }) => {
+    const icon = canvas.getAllByText("Awaiting editorial review")[0]
+      ?.previousElementSibling;
+    await expect(icon?.getBoundingClientRect().width).toBe(14);
+  },
+};
+
+export const LongLabelRightToLeft: Story = {
+  render: () => (
+    <div dir="rtl">
+      <Wrapping />
+    </div>
+  ),
+};
+
+function OnCard() {
+  return (
+    <Card as="div" className={styles.raised}>
+      <Matrix />
+    </Card>
+  );
+}
+
+export const OnRaisedSurface: Story = {
+  render: () => <OnCard />,
+};
+
+export const OnRaisedSurfaceDark: Story = {
+  ...OnRaisedSurface,
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const IconEndVariants: Story = {
+  render: () => (
+    <div className={styles.row}>
+      {(["outline", "soft", "solid"] as const).map((variant) => (
+        <Badge
+          key={variant}
+          label="New"
+          icon={<SparkleIcon />}
+          iconPosition="end"
+          variant={variant}
+        />
+      ))}
+    </div>
+  ),
 };
