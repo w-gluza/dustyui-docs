@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn, waitFor } from "storybook/test";
 import { Button, ExpandableCard, type ExpandableCardProps } from "dustyui";
@@ -151,8 +152,109 @@ export const Grid: Story = {
       ))}
     </div>
   ),
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getAllByRole("button")).toHaveLength(PLACES.length);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Chureito Pagoda" }),
+    );
+
+    await expect(
+      await canvas.findByRole("dialog", { name: "Chureito Pagoda" }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Close" }));
+    await waitFor(() => expect(canvas.queryByRole("dialog")).toBeNull());
+  },
 };
 
 export const TextOnly: Story = {
   args: { media: undefined, expandedMedia: undefined },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Mount Fuji" }));
+
+    await expect(
+      await canvas.findByRole("dialog", { name: "Mount Fuji" }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Close" }));
+    await waitFor(() => expect(canvas.queryByRole("dialog")).toBeNull());
+  },
+};
+
+export const Dark: Story = {
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const Mono: Story = {
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const ExpandedMono: Story = {
+  ...Expanded,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const WithoutSummary: Story = {
+  args: { summary: undefined },
+};
+
+export const LongTitle: Story = {
+  args: {
+    title:
+      "Mount Fuji seen from the north shore of Lake Kawaguchi on a still winter morning",
+  },
+};
+
+export const LongContent: Story = {
+  args: {
+    defaultExpanded: true,
+    children: (
+      <>
+        {PLACES.concat(PLACES, PLACES).map((place, index) => (
+          <p key={index}>{place.body}</p>
+        ))}
+        <Button variant="secondary">Plan a visit</Button>
+      </>
+    ),
+  },
+  tags: ["!autodocs"],
+  play: async ({ canvas }) => {
+    const dialog = await canvas.findByRole("dialog", { name: "Mount Fuji" });
+
+    await expect(dialog.scrollHeight).toBeGreaterThan(dialog.clientHeight);
+  },
+};
+
+export const RightToLeft: Story = {
+  args: { defaultExpanded: true },
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+  tags: ["!autodocs"],
+};
+
+function ControlledCard(args: StoryProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <ExpandableCard
+      {...args}
+      defaultExpanded={undefined}
+      expanded={expanded}
+      onExpandedChange={(next) => {
+        setExpanded(next);
+        args.onExpandedChange?.(next);
+      }}
+    />
+  );
+}
+
+export const Controlled: Story = {
+  render: (args) => <ControlledCard {...args} />,
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Mount Fuji" }));
+
+    await expect(
+      await canvas.findByRole("dialog", { name: "Mount Fuji" }),
+    ).toBeVisible();
+    await expect(args.onExpandedChange).toHaveBeenLastCalledWith(true);
+    await userEvent.click(canvas.getByRole("button", { name: "Close" }));
+    await waitFor(() => expect(canvas.queryByRole("dialog")).toBeNull());
+  },
 };
