@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn } from "storybook/test";
 import { RadioGroup, type RadioGroupProps } from "dustyui";
@@ -44,4 +45,98 @@ export const Dark: Story = {
 
 export const HiddenLegend: Story = {
   args: { legendHidden: true },
+};
+
+const SUBDIVISIONS = [
+  { value: "1", label: "Quarter notes" },
+  { value: "2", label: "Eighth notes" },
+  { value: "3", label: "Triplets" },
+];
+
+function ControlledGroup() {
+  const [value, setValue] = useState("2");
+
+  return (
+    <RadioGroup
+      legend="Subdivision"
+      options={SUBDIVISIONS}
+      value={value}
+      onValueChange={setValue}
+    />
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledGroup />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("radio", { name: "Triplets" }));
+
+    await expect(canvas.getByRole("radio", { name: "Triplets" })).toBeChecked();
+  },
+};
+
+export const Mono: Story = {
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const NothingSelected: Story = {
+  args: { defaultValue: "" },
+};
+
+export const Disabled: Story = {
+  args: { disabled: true },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole("radio", { name: "Triplets" }),
+    ).toBeDisabled();
+  },
+};
+
+export const LongLabels: Story = {
+  args: {
+    options: [
+      {
+        value: "1",
+        label: "Quarter notes, one click on every beat of the bar",
+      },
+      {
+        value: "2",
+        label: "Eighth notes, with a quieter click between the beats",
+      },
+    ],
+  },
+};
+
+export const TwoGroups: Story = {
+  render: () => (
+    <>
+      <RadioGroup
+        legend="Subdivision"
+        options={SUBDIVISIONS}
+        defaultValue="1"
+      />
+      <RadioGroup
+        legend="Accent"
+        options={[
+          { value: "first", label: "First beat" },
+          { value: "none", label: "No accent" },
+        ]}
+        defaultValue="first"
+      />
+    </>
+  ),
+};
+
+export const RightToLeft: Story = {
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const KeyboardFocus: Story = {
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.tab();
+
+    await expect(
+      canvas.getByRole("radio", { name: "Quarter notes" }),
+    ).toHaveFocus();
+  },
 };
