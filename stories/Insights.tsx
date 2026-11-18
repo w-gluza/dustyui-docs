@@ -84,7 +84,7 @@ export function Insights() {
           </h3>
           <span className={styles.aside}>55 min</span>
         </header>
-        <BarChart label="Practice this week" bars={WEEK} highlighted={TODAY} />
+        <BarChart label="Practice this week" bars={WEEK} current={TODAY} />
       </section>
 
       <section className={styles.section} aria-labelledby="insights-balance">

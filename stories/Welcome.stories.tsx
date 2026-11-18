@@ -251,7 +251,7 @@ function Preview() {
             completed={2}
             progress={0.4}
           />
-          <BarChart label="Practice this week" bars={WEEK} highlighted={3} />
+          <BarChart label="Practice this week" bars={WEEK} current={3} />
         </div>
       </Section>
     </div>

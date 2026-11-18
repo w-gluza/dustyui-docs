@@ -10,7 +10,7 @@ const meta = {
   tags: ["autodocs"],
   args: {
     label: "Practice this week",
-    highlighted: 3,
+    current: 3,
     bars: [
       { label: "M", value: 12, description: "Monday, 12 minutes" },
       { label: "T", value: 25, description: "Tuesday, 25 minutes" },
@@ -42,9 +42,18 @@ export const Dark: Story = {
 };
 
 export const CustomValueText: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`highlighted` emphasises a bar without announcing it. Use `current` when the bar stands for now, such as today; it is announced as current.",
+      },
+    },
+  },
   args: {
     label: "Downloads",
-    highlighted: undefined,
+    current: undefined,
+    highlighted: 2,
     bars: [
       { label: "Jan", value: 1200, valueLabel: "1.2k" },
       { label: "Feb", value: 800, valueLabel: "800" },
@@ -52,4 +61,59 @@ export const CustomValueText: Story = {
       { label: "Apr", value: 400, valueLabel: "<1k" },
     ],
   },
+};
+
+export const Mono: Story = {
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const MonoDark: Story = {
+  globals: { theme: "mono", scheme: "dark" },
+};
+
+const MONTH = Array.from({ length: 30 }, (_, index) => ({
+  label: String(index + 1),
+  value: 400 + ((index * 37) % 23) * 520,
+}));
+
+export const ManyBars: Story = {
+  args: { label: "Steps this month", bars: MONTH, current: 17 },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "When the columns get narrow the values hide first, then the axis labels. The highlighted bar keeps its axis label.",
+      },
+    },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("listitem")).toHaveLength(30);
+  },
+};
+
+export const MaxAboveTheData: Story = {
+  args: { max: 60 },
+};
+
+export const AllZeros: Story = {
+  args: {
+    current: undefined,
+    bars: ["M", "T", "W", "T", "F", "S", "S"].map((label) => ({
+      label,
+      value: 0,
+    })),
+  },
+};
+
+export const NoBars: Story = {
+  args: { bars: [], current: undefined },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole("list", { name: "Practice this week" }).children,
+    ).toHaveLength(0);
+  },
+};
+
+export const RightToLeft: Story = {
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
 };
