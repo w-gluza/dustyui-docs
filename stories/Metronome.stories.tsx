@@ -1,11 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, waitFor } from "storybook/test";
 import { Metronome } from "./Metronome";
+import { MetronomeGuide } from "./MetronomeGuide";
+import styles from "./MetronomeGuide.module.css";
 
 const meta = {
   title: "Showcase/Metronome",
   component: Metronome,
   parameters: { layout: "centered" },
+  decorators: [
+    (Story) => (
+      <div className={styles.layout}>
+        {Story()}
+        <MetronomeGuide />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof Metronome>;
 
 export default meta;
