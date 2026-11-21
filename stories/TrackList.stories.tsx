@@ -43,3 +43,47 @@ export const Mono: Story = {
 export const NothingCurrent: Story = {
   args: { currentTrack: undefined },
 };
+
+export const FirstCurrent: Story = {
+  args: { currentTrack: 0 },
+};
+
+export const LastCurrent: Story = {
+  args: { currentTrack: HELIOS.tracks.length - 1 },
+};
+
+export const LongTitles: Story = {
+  args: {
+    tracks: [
+      {
+        title:
+          "A slow morning on the coast road, recorded live in one take with the windows open",
+        duration: "12:04",
+      },
+      {
+        title: "An_unbroken_file_name_for_a_bonus_track.flac",
+        duration: "3:42",
+      },
+    ],
+    currentTrack: 0,
+  },
+};
+
+export const ManyTracks: Story = {
+  args: {
+    tracks: Array.from({ length: 120 }, (_, index) => ({
+      id: String(index),
+      title: `Session take ${String(index + 1)}`,
+      duration: "3:42",
+    })),
+    currentTrack: 99,
+  },
+};
+
+export const Empty: Story = {
+  args: { tracks: [] },
+};
+
+export const RightToLeft: Story = {
+  decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
