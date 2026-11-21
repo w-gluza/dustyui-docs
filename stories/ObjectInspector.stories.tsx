@@ -453,6 +453,61 @@ export const Details: Story = {
   },
 };
 
+export const DetailsOfALongValue: Story = {
+  render: () => (
+    <Demo
+      title="Details of a long value"
+      testing="A very long value is shown in part, with a note that says how much is shown and that copying takes all of it."
+    >
+      <ObjectInspector
+        label="Long values"
+        value={{ description: longValues.description.repeat(6) }}
+        showDetails
+      />
+    </Demo>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(
+      canvas.getByRole("treeitem", { name: /^description/u }),
+    );
+
+    await expect(
+      await canvas.findByText(/^Showing [\d,]+ of [\d,]+ characters/u),
+    ).toBeVisible();
+  },
+};
+
+export const SearchAndDetailsInANarrowSpace: Story = {
+  render: () => (
+    <Demo
+      title="Search and details in a narrow space"
+      testing="The search row wraps, the tree scrolls sideways and the details stay inside the space."
+    >
+      <div className={styles.narrow}>
+        <ObjectInspector
+          label="National parks of the world"
+          value={mediumParks}
+          searchable
+          showDetails
+        />
+      </div>
+    </Demo>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.type(canvas.getByRole("searchbox"), "condor");
+    await userEvent.keyboard("{Enter}");
+    await expect(await canvas.findByText(/^1 of \d+$/u)).toBeVisible();
+
+    const frame = canvas.getByRole("tree").parentElement as HTMLElement;
+    await expect(frame.scrollWidth).toBeLessThanOrEqual(frame.clientWidth);
+    await expect(
+      canvas.getByRole("region", {
+        name: "Selected value in National parks of the world",
+      }),
+    ).toBeVisible();
+  },
+};
+
 const sightingLog = {
   note: "Generated for this demo. These are not real records.",
   sightings: Array.from({ length: 100_000 }, (_, index) => ({
