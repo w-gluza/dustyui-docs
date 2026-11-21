@@ -645,6 +645,11 @@ export const Translated: Story = {
     await userEvent.type(canvas.getByLabelText("Szukaj"), "zeppelin");
 
     await expect(await canvas.findByText("Brak wyników")).toBeVisible();
+
+    const [firstRow] = canvas.getAllByRole("treeitem");
+    if (firstRow) {
+      await userEvent.click(firstRow);
+    }
     await expect(
       canvas.getByRole("button", { name: "Kopiuj ścieżkę" }),
     ).toBeVisible();
