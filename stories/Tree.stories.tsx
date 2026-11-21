@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 import { Tree, type TreeNode } from "dustyui";
@@ -64,7 +65,7 @@ The whole tree is one tab stop.
 
 **Limitations**
 
-- A tree with more than 200 visible rows renders only the rows near the view, so every row must have the same height. Set \`--tree-row-height\` to change it.
+- A tree with more than 200 visible rows renders only the rows near the view, so every row must have the same height. Set \`--tree-row-height\` to change it, and \`--tree-indent\` to change how far each level is indented.
 - In a large tree the browser's own find does not see rows that are scrolled out of view.
 - Left and Right are not swapped for right-to-left languages.
 `;
@@ -177,5 +178,149 @@ export const Closed: Story = {
   ),
   play: async ({ canvas }) => {
     await expect(canvas.getAllByRole("treeitem")).toHaveLength(1);
+  },
+};
+
+const basicTree = (
+  <Tree
+    root={files}
+    label="Project files"
+    defaultExpanded={["dustyui", "src", "Tree"]}
+    renderRow={(row) => row.node.name}
+    getRowText={(row) => row.node.name}
+  />
+);
+
+export const Dark: Story = {
+  render: () => basicTree,
+  globals: { theme: "dusty", scheme: "dark" },
+};
+
+export const Mono: Story = {
+  render: () => basicTree,
+  globals: { theme: "mono", scheme: "light" },
+};
+
+export const RightToLeft: Story = {
+  render: () => <div dir="rtl">{basicTree}</div>,
+};
+
+function ControlledTree() {
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(
+    () => new Set(["dustyui"]),
+  );
+  const [selected, setSelected] = useState("package.json");
+
+  return (
+    <>
+      <p>
+        Selected: <output>{selected}</output>
+      </p>
+      <Tree
+        root={files}
+        label="Project files"
+        expanded={expanded}
+        onExpandedChange={setExpanded}
+        selected={selected}
+        onSelectedChange={setSelected}
+        renderRow={(row) => row.node.name}
+        getRowText={(row) => row.node.name}
+      />
+    </>
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledTree />,
+  play: async ({ canvas, userEvent }) => {
+    await expect(
+      canvas.getByRole("treeitem", { name: "package.json" }),
+    ).toHaveAttribute("aria-selected", "true");
+
+    await userEvent.click(canvas.getByRole("treeitem", { name: "src" }));
+
+    await expect(canvas.getByRole("status")).toHaveTextContent("src");
+    await expect(
+      canvas.getByRole("treeitem", { name: "index.ts" }),
+    ).toBeVisible();
+  },
+};
+
+const manyFiles = folder(
+  "archive",
+  ...Array.from({ length: 600 }, (_, index) =>
+    folder(`take-${String(index + 1).padStart(3, "0")}.flac`),
+  ),
+);
+
+export const LargeTree: Story = {
+  render: () => (
+    <Tree
+      root={manyFiles}
+      label="Archive"
+      defaultExpanded={["archive"]}
+      style={{ maxBlockSize: "20rem", overflow: "auto" }}
+      renderRow={(row) => row.node.name}
+      getRowText={(row) => row.node.name}
+    />
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("treeitem").length).toBeLessThan(200);
+  },
+};
+
+export const LongLabelsInANarrowSpace: Story = {
+  render: () => (
+    <div style={{ inlineSize: "12rem" }}>
+      <Tree
+        root={folder(
+          "recordings",
+          folder(
+            "2026",
+            folder("a_very_long_unbroken_file_name_for_a_live_session.flac"),
+          ),
+        )}
+        label="Recordings"
+        defaultExpanded={["recordings", "2026"]}
+        renderRow={(row) => row.node.name}
+      />
+    </div>
+  ),
+};
+
+export const CustomRowHeightAndIndent: Story = {
+  render: () => (
+    <Tree
+      root={files}
+      label="Project files"
+      defaultExpanded={["dustyui", "src", "Tree"]}
+      style={
+        { "--tree-row-height": "2.25rem", "--tree-indent": "2rem" } as never
+      }
+      renderRow={(row) => row.node.name}
+    />
+  ),
+};
+
+export const ControlInARow: Story = {
+  render: () => (
+    <Tree
+      root={files}
+      label="Project files"
+      defaultExpanded={["dustyui"]}
+      renderRow={(row) => (
+        <>
+          {row.node.name} <button type="button">Rename {row.node.name}</button>
+        </>
+      )}
+      getRowText={(row) => row.node.name}
+    />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Rename src" }));
+
+    await expect(
+      canvas.getByRole("treeitem", { name: /^src/u }),
+    ).toHaveAttribute("aria-expanded", "false");
   },
 };
