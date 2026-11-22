@@ -17,7 +17,7 @@ function Editable({
       beats={beats}
       onBeatChange={(index, kind) => {
         setBeats(beats.map((beat, i) => (i === index ? kind : beat)));
-        return onBeatChange(index, kind);
+        return onBeatChange?.(index, kind);
       }}
     />
   );
@@ -121,4 +121,12 @@ export const Wrapping: Story = {
 
 export const RightToLeft: Story = {
   decorators: [(Story) => <div dir="rtl">{Story()}</div>],
+};
+
+export const ReadOnly: Story = {
+  render: (args) => <BeatPattern {...args} onBeatChange={undefined} />,
+  play: async ({ canvas }) => {
+    await expect(canvas.queryAllByRole("button")).toHaveLength(0);
+    await expect(canvas.getAllByRole("listitem")).toHaveLength(4);
+  },
 };

@@ -324,3 +324,35 @@ export const ControlInARow: Story = {
     ).toHaveAttribute("aria-expanded", "false");
   },
 };
+
+function TreeWithRowAction() {
+  const [opened, setOpened] = useState<string>();
+
+  return (
+    <>
+      <Tree
+        root={files}
+        label="Project files"
+        defaultExpanded={["dustyui"]}
+        renderRow={(row) => row.node.name}
+        getRowText={(row) => row.node.name}
+        onRowAction={(row) => {
+          setOpened(row.node.name);
+        }}
+      />
+      <p role="status">
+        {opened ? `Opened ${opened}` : "Press Enter on a row to open it"}
+      </p>
+    </>
+  );
+}
+
+export const RowAction: Story = {
+  render: () => <TreeWithRowAction />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.tab();
+    await userEvent.keyboard("{ArrowDown}{Enter}");
+
+    await expect(canvas.getByRole("status")).toHaveTextContent(/^Opened /u);
+  },
+};

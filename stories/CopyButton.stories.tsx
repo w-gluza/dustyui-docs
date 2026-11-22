@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, fn, spyOn } from "storybook/test";
+import { expect, fn, spyOn, waitFor } from "storybook/test";
 import { CopyButton } from "dustyui";
 
 const meta = {
@@ -150,5 +150,38 @@ export const Disabled: Story = {
   args: { disabled: true },
   play: async ({ canvas }) => {
     await expect(canvas.getByRole("button", { name: "Copy" })).toBeDisabled();
+  },
+};
+
+export const ValueWorkedOutOnClick: Story = {
+  args: {
+    value: () => `npm install dustyui@${String(4)}`,
+    feedbackDuration: Infinity,
+  },
+  beforeEach: stubClipboard(true),
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Copy" }));
+
+    await canvas.findByRole("button", { name: "Copied" });
+    await expect(args.onCopied).toHaveBeenCalledWith("npm install dustyui@4");
+  },
+};
+
+export const AnnouncementDiffersFromLabel: Story = {
+  args: {
+    copiedLabel: "Copied",
+    copiedAnnouncement: "Install command copied",
+    feedbackDuration: Infinity,
+  },
+  beforeEach: stubClipboard(true),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Copy" }));
+
+    await canvas.findByRole("button", { name: "Copied" });
+    await waitFor(() =>
+      expect(
+        document.querySelector("[data-dusty-announcer] [aria-live='polite']"),
+      ).toHaveTextContent("Install command copied"),
+    );
   },
 };

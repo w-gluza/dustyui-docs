@@ -132,3 +132,26 @@ export const KeyboardFocus: Story = {
     ).toHaveFocus();
   },
 };
+
+export const WithTimes: Story = {
+  args: { elapsed: "1:12", duration: "3:26" },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText("1:12")).toBeVisible();
+    await expect(canvas.getByText("3:26")).toBeVisible();
+  },
+};
+
+export const WithoutSteps: Story = {
+  render: (args) => (
+    <PlaybackControls {...args} onPrevious={null} onNext={null} />
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("button", { name: "Play" })).toBeVisible();
+    await expect(
+      canvas.queryByRole("button", { name: "Previous track" }),
+    ).toBeNull();
+    await expect(
+      canvas.queryByRole("button", { name: "Next track" }),
+    ).toBeNull();
+  },
+};

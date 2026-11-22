@@ -140,3 +140,39 @@ export const KeyboardFocus: Story = {
     ).toHaveFocus();
   },
 };
+
+export const Required: Story = {
+  args: { required: true, defaultValue: undefined, name: "subdivision" },
+  decorators: [(Story) => <form aria-label="Metronome">{Story()}</form>],
+  play: async ({ canvas, userEvent }) => {
+    const form = canvas.getByRole<HTMLFormElement>("form");
+    await expect(form.checkValidity()).toBe(false);
+
+    await userEvent.click(canvas.getByRole("radio", { name: "Triplets" }));
+    await expect(form.checkValidity()).toBe(true);
+  },
+};
+
+export const RequiredWithTheChosenOptionDisabled: Story = {
+  args: {
+    required: true,
+    name: "subdivision",
+    defaultValue: "1",
+    options: [
+      { value: "1", label: "Quarter notes", disabled: true },
+      { value: "2", label: "Eighth notes" },
+      { value: "3", label: "Triplets" },
+    ],
+  },
+  decorators: [(Story) => <form aria-label="Metronome">{Story()}</form>],
+  play: async ({ canvas, userEvent }) => {
+    const form = canvas.getByRole<HTMLFormElement>("form");
+    await expect(
+      canvas.getByRole("radio", { name: "Quarter notes" }),
+    ).toBeChecked();
+    await expect(form.checkValidity()).toBe(false);
+
+    await userEvent.click(canvas.getByRole("radio", { name: "Triplets" }));
+    await expect(form.checkValidity()).toBe(true);
+  },
+};

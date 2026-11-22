@@ -401,3 +401,42 @@ export const NumberedWithLeading: Story = {
     </List>
   ),
 };
+
+export const NumberedFromAStart: Story = {
+  args: { numbered: true, start: 4 },
+  render: (args) => (
+    <List {...args}>
+      {RUDIMENTS.map((rudiment) => (
+        <ListItem key={rudiment.name} title={rudiment.name} />
+      ))}
+    </List>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("list")).toHaveAttribute("start", "4");
+  },
+};
+
+export const PropsOnTheRowLink: Story = {
+  render: (args) => (
+    <List {...args}>
+      {RUDIMENTS.map((rudiment) => (
+        <ListItem
+          key={rudiment.name}
+          href={`#${rudiment.name.toLowerCase().replaceAll(" ", "-")}`}
+          actionProps={{ target: "_blank", rel: "noreferrer" }}
+          title={rudiment.name}
+          trailing={
+            <span className={styles.icon}>
+              <ArrowUpRightIcon />
+            </span>
+          }
+        />
+      ))}
+    </List>
+  ),
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole("link", { name: /Paradiddle/u }),
+    ).toHaveAttribute("target", "_blank");
+  },
+};

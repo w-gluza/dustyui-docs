@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, waitFor } from "storybook/test";
-import { announce, Button } from "dustyui";
+import { announce, Button, readyAnnouncer } from "dustyui";
 
 const meta = {
   title: "Utilities/Announcer",
@@ -40,6 +41,28 @@ export const Assertive: Story = {
           "[data-dusty-announcer] [aria-live='assertive']",
         ),
       ).toHaveTextContent("Connection lost"),
+    );
+  },
+};
+
+function SaveButton() {
+  useEffect(readyAnnouncer, []);
+
+  return <Button onClick={() => announce("Saved")}>Save</Button>;
+}
+
+export const ReadyBeforeTheFirstMessage: Story = {
+  render: () => <SaveButton />,
+  play: async ({ canvas, userEvent }) => {
+    await expect(
+      document.querySelector("[data-dusty-announcer] [aria-live='polite']"),
+    ).not.toBeNull();
+
+    await userEvent.click(canvas.getByRole("button"));
+    await waitFor(() =>
+      expect(
+        document.querySelector("[data-dusty-announcer] [aria-live='polite']"),
+      ).toHaveTextContent("Saved"),
     );
   },
 };

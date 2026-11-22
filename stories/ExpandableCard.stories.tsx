@@ -258,3 +258,17 @@ export const Controlled: Story = {
     await waitFor(() => expect(canvas.queryByRole("dialog")).toBeNull());
   },
 };
+
+export const DialogProps: Story = {
+  args: {
+    defaultExpanded: true,
+    dialogProps: { "data-section": "places", lang: "en-GB" },
+  },
+  tags: ["!autodocs"],
+  play: async ({ canvas }) => {
+    const dialog = await canvas.findByRole("dialog", { name: "Mount Fuji" });
+
+    await expect(dialog).toHaveAttribute("data-section", "places");
+    await expect(dialog).toHaveAttribute("lang", "en-GB");
+  },
+};

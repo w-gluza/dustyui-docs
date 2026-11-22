@@ -87,3 +87,13 @@ export const Empty: Story = {
 export const RightToLeft: Story = {
   decorators: [(Story) => <div dir="rtl">{Story()}</div>],
 };
+
+export const ReadOnly: Story = {
+  args: { onTrackSelect: undefined },
+  play: async ({ canvas }) => {
+    await expect(canvas.queryAllByRole("button")).toHaveLength(0);
+    await expect(canvas.getAllByRole("listitem")).toHaveLength(
+      HELIOS.tracks.length,
+    );
+  },
+};
